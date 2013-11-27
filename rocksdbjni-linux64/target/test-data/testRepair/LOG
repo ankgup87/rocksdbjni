@@ -1,5 +1,0 @@
-2013/11/26-21:21:36.570783 7f05749fb700 Log #3: 5 ops saved to Table #1385529696548400 OK
-2013/11/26-21:21:36.571036 7f05749fb700 Archiving /home/aigupta/rocksdbjni/rocksdbjni-linux64/target/test-data/testRepair/000003.log: OK
-2013/11/26-21:21:36.571076 7f05749fb700 Table #1385529696548400: 5 entries OK
-2013/11/26-21:21:36.571260 7f05749fb700 Archiving /home/aigupta/rocksdbjni/rocksdbjni-linux64/target/test-data/testRepair/MANIFEST-000004: OK
-2013/11/26-21:21:36.595122 7f05749fb700 **** Repaired rocksdb /home/aigupta/rocksdbjni/rocksdbjni-linux64/target/test-data/testRepair; recovered 1 files; 327 bytes. Some data may have been lost. ****

@@ -1,2 +1,0 @@
-/export/apps/jdk/JDK-1_6_0_27/jre/lib/amd64/server:/export/apps/jdk/JDK-1_6_0_27/jre/lib/amd64:/export/apps/jdk/JDK-1_6_0_27/jre/../lib/amd64:/export/apps/xtools/oracle-instant-client_10.2:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
-
