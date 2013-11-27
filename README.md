@@ -48,4 +48,15 @@ Replace 'lpStruct->merge_operator = (rocksdb::MergeOperator*)(intptr_t)env->GetL
 
 Replace 'lpStruct->block_cache = (rocksdb::Cache*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.block_cache);' with 'lpStruct->block_cache = std::shared_ptr<rocksdb::Cache>((rocksdb::Cache*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.block_cache));' <br/>
  
-Replace 'lpStruct->info_log = (rocksdb::Logger*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.info_log);' with 'lpStruct->info_log = std::shared_ptr<rocksdb::Logger>((rocksdb::Logger*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.info_log));'
+Replace 'lpStruct->info_log = (rocksdb::Logger*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.info_log);' with 'lpStruct->info_log = std::shared_ptr<rocksdb::Logger>((rocksdb::Logger*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.info_log));' <br/>
+
+make clean install (This will create .so files) <br/>
+
+
+Create jar files
+---------------
+---------------
+cd ${ROCKSDBJNI_HOME} <br/>
+remove <goal>generate</goal> line from rocksdbjni/pom.xml file so that it does not auto-generate code <br/>
+mvn install -P download -P linux64 <br/>
+
