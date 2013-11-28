@@ -51,7 +51,7 @@
     <forge-project-id>rocksdbjni</forge-project-id>
     <forge-project-id-uc>ROCKSDBJNI</forge-project-id-uc>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <hawtjni-version>1.9</hawtjni-version>
+    <hawtjni-version>0.1</hawtjni-version>
     <leveldb-api-version>0.6</leveldb-api-version>
   </properties>
 
@@ -59,58 +59,6 @@
     <module>rocksdbjni</module>
   </modules>
 
-  <url>http://${forge-project-id}.fusesource.org</url>
-  <inceptionYear>2009</inceptionYear>
-
-  <issueManagement>
-    <system>github</system>
-    <url>https://github.com/fusesource/leveldbjni/issues</url>
-  </issueManagement>
-
-  <mailingLists>
-    <mailingList>
-      <name>${forge-project-id} dev</name>
-      <post>${forge-project-id}-dev@fusesource.org</post>
-      <subscribe>${forge-project-id}-dev-subscribe@fusesource.org</subscribe>
-    </mailingList>
-    <mailingList>
-      <name>${forge-project-id} commits</name>
-      <post>${forge-project-id}-commits@fusesource.org</post>
-      <subscribe>${forge-project-id}-commits-subscribe@fusesource.org</subscribe>
-    </mailingList>
-  </mailingLists>
-
-  <licenses>
-    <license>
-      <name>The BSD 3-Clause License</name>
-      <url>http://www.opensource.org/licenses/BSD-3-Clause</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <scm>
-    <connection>scm:git:git://github.com/fusesource/leveldbjni.git</connection>
-    <developerConnection>scm:git:git@github.com:fusesource/leveldbjni.git</developerConnection>
-    <url>https://github.com/fusesource/leveldbjni</url>
-  </scm>
-
-  <distributionManagement>
-    <site>
-      <id>website.fusesource.org</id>
-      <name>website</name>
-      <url>dav:http://fusesource.com/forge/dav/${forge-project-id}/maven/${project.version}</url>
-    </site>
-  </distributionManagement>
-
-  <developers>
-    <developer>
-      <id>chirino</id>
-      <name>Hiram Chirino</name>
-      <email>hiram@hiramchirino.com</email>
-      <url>http://hiramchirino.com</url>
-      <timezone>GMT-5</timezone>
-    </developer>
-  </developers>
 
   <dependencies>
     <dependency>
@@ -205,11 +153,6 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>surefire-report-maven-plugin</artifactId>
         <version>2.0-beta-1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.5</version>
       </plugin>
 
     </plugins>

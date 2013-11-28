@@ -39,6 +39,8 @@ import static org.fusesource.hawtjni.runtime.ClassFlag.CPP;
 import static org.fusesource.hawtjni.runtime.ClassFlag.STRUCT;
 import static org.fusesource.hawtjni.runtime.FieldFlag.CONSTANT;
 import static org.fusesource.hawtjni.runtime.FieldFlag.FIELD_SKIP;
+import static org.fusesource.hawtjni.runtime.FieldFlag.POINTER_FIELD;
+import static org.fusesource.hawtjni.runtime.FieldFlag.SHARED_PTR;
 import static org.fusesource.hawtjni.runtime.MethodFlag.CONSTANT_INITIALIZER;
 
 /**
@@ -91,12 +93,12 @@ public class NativeOptions {
 
   @JniField(flags={FIELD_SKIP})
   private NativeLogger infoLogObject = null;
-  @JniField(cast="rocksdb::Logger*")
+  @JniField(flags={SHARED_PTR}, cast="rocksdb::Logger*")
   private long info_log = 0;
 
   @JniField(cast="rocksdb::Env*")
   private long env = DEFAULT_ENV;
-  @JniField(cast="rocksdb::Cache*")
+  @JniField(flags={SHARED_PTR}, cast="rocksdb::Cache*")
   private long block_cache = 0;
   @JniField(flags={FIELD_SKIP})
   private NativeCache cache;
@@ -104,7 +106,7 @@ public class NativeOptions {
   @JniField(cast="rocksdb::CompressionType")
   private int compression = NativeCompressionType.kSnappyCompression.value;
 
-  @JniField(cast="rocksdb::MergeOperator*")
+  @JniField(flags={SHARED_PTR}, cast="rocksdb::MergeOperator*")
   private long merge_operator = 0;
   @JniField(flags={FIELD_SKIP})
   private NativeMergeOperator _mergeOperator = null;
