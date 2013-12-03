@@ -116,7 +116,7 @@ public class DBTest extends TestCase {
   @Test
   public void testCRUD() throws IOException, DBException
   {
-    Options options = new Options().createIfMissing(true).cacheSize(1024*10*10).
+    Options options = new Options().createIfMissing(true).cacheSize(1024*10*10).numShardBits(6).
         filterPolicy(new FilterPolicy()
         {
           public int bitsPerKey()

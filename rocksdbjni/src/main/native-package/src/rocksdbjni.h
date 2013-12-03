@@ -259,6 +259,7 @@ struct JNIMergeOperator : public rocksdb::MergeOperator {
 
 struct JNILRUCache : public rocksdb::Cache {
   jlong size;
+  jint num_shard_bits;
   std::shared_ptr<rocksdb::Cache> lruCache;
 
   rocksdb::Cache::Handle* Insert(const rocksdb::Slice& key, void* value, size_t charge,
@@ -300,7 +301,7 @@ struct JNILRUCache : public rocksdb::Cache {
   {
     if(lruCache.get() == NULL)
     {
-      lruCache = rocksdb::NewLRUCache(size);
+      lruCache = rocksdb::NewLRUCache(size, num_shard_bits);
     }
 
     return lruCache;

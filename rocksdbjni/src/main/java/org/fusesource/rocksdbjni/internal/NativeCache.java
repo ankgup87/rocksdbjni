@@ -81,6 +81,9 @@ public class NativeCache extends NativeObject {
     @JniField(cast="jlong", flags={POINTER_FIELD})
     long size;
 
+    @JniField(cast="jint", flags={POINTER_FIELD})
+    long num_shard_bits;
+
     @JniMethod(flags={CONSTANT_INITIALIZER})
     private static final native void init();
 
@@ -94,7 +97,7 @@ public class NativeCache extends NativeObject {
 
   private long globalRef;
 
-  public NativeCache(long capacity) {
+  public NativeCache(long capacity, int numShardBits) {
     super(CacheJNI.create());
     try
     {
@@ -106,6 +109,7 @@ public class NativeCache extends NativeObject {
       CacheJNI cacheJNI = new CacheJNI();
       cacheJNI.lruCache = 0;
       cacheJNI.size = capacity;
+      cacheJNI.num_shard_bits = numShardBits;
 
       CacheJNI.memmove(self, cacheJNI, CacheJNI.SIZEOF);
     }

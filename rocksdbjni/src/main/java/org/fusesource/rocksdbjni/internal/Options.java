@@ -60,6 +60,7 @@ public class Options {
   private long deleteObsoleteFilesPeriodMicros = 6 * 60 * 60 * 1000000;
   private int level0SlowdownWritesTrigger = 8;
   private FilterPolicy filterPolicy;
+  private int numShardBits;
 
   static void checkArgNotNull(Object value, String name) {
     if(value==null) {
@@ -299,6 +300,14 @@ public class Options {
     return this;
   }
 
+  public int numShardBits() {
+    return numShardBits;
+  }
+
+  public Options numShardBits(int numShardBits) {
+    this.numShardBits = numShardBits;
+    return this;
+  }
 
   public long cacheSize() {
     return cacheSize;
