@@ -37,6 +37,7 @@ import org.fusesource.rocksdbjni.JniDBFactory;
 import org.fusesource.rocksdbjni.internal.CompactionFilter;
 import org.fusesource.rocksdbjni.internal.DB;
 import org.fusesource.rocksdbjni.internal.DBFactory;
+import org.fusesource.rocksdbjni.internal.FilterPolicy;
 import org.fusesource.rocksdbjni.internal.JniDB;
 import org.fusesource.rocksdbjni.internal.MergeOperator;
 import org.fusesource.rocksdbjni.internal.Options;
@@ -115,13 +116,26 @@ public class DBTest extends TestCase {
   @Test
   public void testCRUD() throws IOException, DBException
   {
-    Options options = new Options().createIfMissing(true).cacheSize(1024*10*10).logger(new Logger()
-    {
-      public void log(String s)
-      {
-        System.out.println(s);
-      }
-    });
+    Options options = new Options().createIfMissing(true).cacheSize(1024*10*10).
+        filterPolicy(new FilterPolicy()
+        {
+          public int bitsPerKey()
+          {
+            return 10;
+          }
+
+          public String name()
+          {
+            return "test";
+          }
+        }).
+        logger(new Logger()
+        {
+          public void log(String s)
+          {
+            System.out.println(s);
+          }
+        });
 
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);

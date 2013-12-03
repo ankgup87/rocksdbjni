@@ -78,6 +78,7 @@
 #include "rocksdb/merge_operator.h"
 #include "rocksdb/compaction_filter.h"
 #include "rocksdb/cache.h"
+#include "rocksdb/filter_policy.h"
 
 struct JNIComparator : public rocksdb::Comparator {
   jobject target;
@@ -306,7 +307,36 @@ struct JNILRUCache : public rocksdb::Cache {
   }
 };
 
+struct JNIBloomFilter : public rocksdb::FilterPolicy {
+  jint bits_per_key;
+  const mutable rocksdb::FilterPolicy* filterPolicy;
+  const char *name;
 
+  const char* Name() const
+  {
+    return name;
+  }
+
+  void CreateFilter(const rocksdb::Slice* keys, int n, std::string* dst) const
+  {
+    getFilterPolicyPtr()->CreateFilter(keys, n, dst);
+  }
+
+  bool KeyMayMatch(const rocksdb::Slice& key, const rocksdb::Slice& filter) const
+  {
+    return getFilterPolicyPtr()->KeyMayMatch(key, filter);
+  }
+
+  const rocksdb::FilterPolicy* getFilterPolicyPtr() const
+  {
+    if(filterPolicy == NULL)
+    {
+      filterPolicy = rocksdb::NewBloomFilterPolicy(bits_per_key);
+    }
+
+    return filterPolicy;
+  }
+};
 #endif
 
 

@@ -97,6 +97,7 @@ public class JniDBFactory implements DBFactory
     NativeOptions options;
     NativeMergeOperator nativeMergeOperator = null;
     NativeCompactionFilter nativeCompactionFilter = null;
+    NativeFilterPolicy nativeFilterPolicy = null;
 
     public void init(Options value) {
 
@@ -139,6 +140,20 @@ public class JniDBFactory implements DBFactory
       if(value.cacheSize()>0 ) {
         cache = new NativeCache(value.cacheSize());
         options.cache(cache);
+      }
+
+      final FilterPolicy filterPolicy = value.filterPolicy();
+      if(filterPolicy != null)
+      {
+        nativeFilterPolicy = new NativeFilterPolicy(filterPolicy.bitsPerKey())
+        {
+          @Override
+          public String name()
+          {
+            return filterPolicy.name();
+          }
+        };
+        options.filterPolicy(nativeFilterPolicy);
       }
 
       final DBComparator userComparator = value.comparator();

@@ -59,6 +59,7 @@ public class Options {
   private boolean disableAutoCompactions = false;
   private long deleteObsoleteFilesPeriodMicros = 6 * 60 * 60 * 1000000;
   private int level0SlowdownWritesTrigger = 8;
+  private FilterPolicy filterPolicy;
 
   static void checkArgNotNull(Object value, String name) {
     if(value==null) {
@@ -305,6 +306,15 @@ public class Options {
 
   public Options cacheSize(long cacheSize) {
     this.cacheSize = cacheSize;
+    return this;
+  }
+
+  public FilterPolicy filterPolicy() {
+    return filterPolicy;
+  }
+
+  public Options filterPolicy(FilterPolicy filterPolicy) {
+    this.filterPolicy = filterPolicy;
     return this;
   }
 

@@ -92,6 +92,11 @@ public class NativeOptions {
   private long comparator = comparatorObject.pointer();
 
   @JniField(flags={FIELD_SKIP})
+  private NativeFilterPolicy nativeFilterPolicy = null;
+  @JniField(cast="const rocksdb::FilterPolicy*")
+  private long filter_policy = 0;
+
+  @JniField(flags={FIELD_SKIP})
   private NativeLogger infoLogObject = null;
   @JniField(flags={SHARED_PTR}, cast="rocksdb::Logger*")
   private long info_log = 0;
@@ -304,6 +309,20 @@ public class NativeOptions {
       this.info_log = 0;
     } else {
       this.info_log = logger.pointer();
+    }
+    return this;
+  }
+
+  public NativeFilterPolicy filterPolicy() {
+    return nativeFilterPolicy;
+  }
+
+  public NativeOptions filterPolicy(NativeFilterPolicy filterPolicy) {
+    this.nativeFilterPolicy = filterPolicy;
+    if( filterPolicy ==null ) {
+      this.filter_policy = 0;
+    } else {
+      this.filter_policy = filterPolicy.pointer();
     }
     return this;
   }

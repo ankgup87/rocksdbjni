@@ -88,7 +88,7 @@ public class NativeCache extends NativeObject {
     public static final native long NewLRUCache(
         @JniArg(cast="size_t") long capacity);
 
-    @JniField(flags={CONSTANT}, accessor="sizeof(struct JNIComparator)")
+    @JniField(flags={CONSTANT}, accessor="sizeof(struct JNILRUCache)")
     static int SIZEOF;
   }
 
