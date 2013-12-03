@@ -1,62 +1,37 @@
-Get stuff:
----------
----------
+Installing custom hawtjni (needed for smart pointer JNI code)
+------------------------
+git clone https://github.com/ankgup87/hawtjni.git <br/>
+cd hawtjni <br/>
+mvn install <br/>
 
+Compile snappy
+------------------------
 wget http://snappy.googlecode.com/files/snappy-1.0.5.tar.gz <br/>
 tar -zxvf snappy-1.0.5.tar.gz <br/>
-git clone https://github.com/facebook/rocksdb.git <br/>
-export SNAPPY_HOME=`cd snappy-1.0.5; pwd` <br/>
-export ROCKSDB_HOME=`cd rocksdb; pwd` <br/>
-export ROCKSDBJNI_HOME=`cd rocksdbjni; pwd` <br/>
-
-Compile Snappy:
----------
----------
-cd ${SNAPPY_HOME} <br/>
 ./configure --disable-shared --with-pic <br/>
 make <br/>
 
-Compile RocksDB:
----------
----------
-cd ${ROCKSDB_HOME} <br/>
-Add -fPIC flag to CFLAGS and CXXFLAGS in Makefile
+Compile rocksDB
+----
+git clone https://github.com/facebook/rocksdb.git <br/>
+
+Add -fPIC flag to CFLAGS and CXXFLAGS in rocksdb/Makefile
 compile rocksDB <br/>
+
+
+Set env variables
+----
+export ROCKSDB_HOME=rocksDBPath <br/>
+export SNAPPY_HOME=snappyPath <br/>
 
 Compile JNI:
 ---------
----------
-cd ${ROCKSDBJNI_HOME} <br/>
-mvn clean install -P download -P linux64 <br/>
-
-Fix C++ code (hawtjni does not have support for std::shared_ptr and thus we have to fix pointer to shared_ptr conversion):
-------------
-------------
-cd rocksdbjni-linux64/target/native-build <br/>
-Fix Makefile by replacing 'CXX = g++' with 'CXX = g++ -std=gnu++11' <br/>
-Fix rocksdbjni.cpp by replacing 'rc = (intptr_t)(rocksdb::Cache *)rocksdb::NewLRUCache((size_t)arg0);' with 'rc = (intptr_t)(rocksdb::Cache *)rocksdb::NewLRUCache((size_t)arg0).get();' <br/>
-
-Fix rocksdbjni_structs.cpp: <br/>
-
-Replace 'env->SetLongField(lpObject, NativeOptionsFc.merge_operator, (jlong)(intptr_t)lpStruct->merge_operator);' with 'env->SetLongField(lpObject, NativeOptionsFc.merge_operator, (jlong)(intptr_t)lpStruct->merge_operator.get());' <br/>
-
-Replace 'env->SetLongField(lpObject, NativeOptionsFc.block_cache, (jlong)(intptr_t)lpStruct->block_cache);' with 'env->SetLongField(lpObject, NativeOptionsFc.block_cache, (jlong)(intptr_t)lpStruct->block_cache.get());' <br/>
-
-Replace 'env->SetLongField(lpObject, NativeOptionsFc.info_log, (jlong)(intptr_t)lpStruct->info_log);' with 'env->SetLongField(lpObject, NativeOptionsFc.info_log, (jlong)(intptr_t)lpStruct->info_log.get());' <br/>
-
-Replace 'lpStruct->merge_operator = (rocksdb::MergeOperator*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.merge_operator);' with 'lpStruct->merge_operator = std::shared_ptr<rocksdb::MergeOperator>((rocksdb::MergeOperator*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.merge_operator));' <br/>
-
-Replace 'lpStruct->block_cache = (rocksdb::Cache*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.block_cache);' with 'lpStruct->block_cache = std::shared_ptr<rocksdb::Cache>((rocksdb::Cache*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.block_cache));' <br/>
- 
-Replace 'lpStruct->info_log = (rocksdb::Logger*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.info_log);' with 'lpStruct->info_log = std::shared_ptr<rocksdb::Logger>((rocksdb::Logger*)(intptr_t)env->GetLongField(lpObject, NativeOptionsFc.info_log));' <br/>
-
-make clean install (This will create .so files) <br/>
-
-
-Create jar files
----------------
----------------
-cd ${ROCKSDBJNI_HOME} <br/>
-remove <goal>generate</goal> line from rocksdbjni/pom.xml file so that it does not auto-generate code <br/>
+cd rocksDBJNIPath <br/>
+mvn install -P download -P linux64 <br/>
+Build will break once as Makefile is not setup correctly for c++11 compilation(TODO: fix this.!) In rocksdbjni-linux64/target/native-build/Makefile, append -std=c++11 to CXX=g++ line. <br/>
 mvn install -P download -P linux64 <br/>
 
+
+Output JAR files will be present at: <br/>
+rocksdbjni/target/rocksdbjni-0.1.jar <br/>
+rocksdbjni-linux64/target/rocksdbjni-linux64-0.1.jar <br/>
