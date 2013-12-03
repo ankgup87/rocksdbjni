@@ -77,6 +77,7 @@
 #include "rocksdb/slice.h"
 #include "rocksdb/merge_operator.h"
 #include "rocksdb/compaction_filter.h"
+#include "rocksdb/cache.h"
 
 struct JNIComparator : public rocksdb::Comparator {
   jobject target;
@@ -253,6 +254,56 @@ struct JNIMergeOperator : public rocksdb::MergeOperator {
     const char* Name() const {
        return name;
     }
+};
+
+struct JNILRUCache : public rocksdb::Cache {
+  jlong size;
+  std::shared_ptr<rocksdb::Cache> lruCache;
+
+  rocksdb::Cache::Handle* Insert(const rocksdb::Slice& key, void* value, size_t charge,
+                 void (*deleter)(const rocksdb::Slice& key, void* value)){
+    return getCachePtr()->Insert(key, value, charge, deleter);
+  }
+
+  rocksdb::Cache::Handle* Lookup(const rocksdb::Slice& key)
+  {
+    return getCachePtr()->Lookup(key);
+  }
+
+  void Release(rocksdb::Cache::Handle* handle)
+  {
+    getCachePtr()->Release(handle);
+  }
+
+  void* Value(rocksdb::Cache::Handle* handle)
+  {
+    return getCachePtr()->Value(handle);
+  }
+
+  void Erase(const rocksdb::Slice& key)
+  {
+    return getCachePtr()->Erase(key);
+  }
+
+  uint64_t NewId()
+  {
+    return getCachePtr()->NewId();
+  }
+
+  size_t GetCapacity()
+  {
+    return getCachePtr()->GetCapacity();
+  }
+
+  std::shared_ptr<rocksdb::Cache> getCachePtr()
+  {
+    if(lruCache.get() == NULL)
+    {
+      lruCache = rocksdb::NewLRUCache(size);
+    }
+
+    return lruCache;
+  }
 };
 
 

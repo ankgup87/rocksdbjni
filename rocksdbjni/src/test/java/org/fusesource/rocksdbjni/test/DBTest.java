@@ -115,7 +115,13 @@ public class DBTest extends TestCase {
   @Test
   public void testCRUD() throws IOException, DBException
   {
-    Options options = new Options().createIfMissing(true);
+    Options options = new Options().createIfMissing(true).cacheSize(1024*10*10).logger(new Logger()
+    {
+      public void log(String s)
+      {
+        System.out.println(s);
+      }
+    });
 
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
