@@ -71,11 +71,11 @@ public class NativeReadOptions {
         }
     }
 
-    public NativeReadOptions snapshot(NativeSnapshot snapshot) {
+    public NativeReadOptions snapshot(JniSnapshot snapshot) {
         if( snapshot==null ) {
             this.snapshot = 0;
         } else {
-            this.snapshot = snapshot.pointer();
+            this.snapshot = snapshot.snapshot().pointer();
         }
         return this;
     }

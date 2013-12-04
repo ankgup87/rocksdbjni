@@ -34,20 +34,22 @@ package org.fusesource.rocksdbjni.test;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.fusesource.rocksdbjni.JniDBFactory;
-import org.fusesource.rocksdbjni.internal.CompactionFilter;
 import org.fusesource.rocksdbjni.internal.DB;
 import org.fusesource.rocksdbjni.internal.DBFactory;
-import org.fusesource.rocksdbjni.internal.FilterPolicy;
 import org.fusesource.rocksdbjni.internal.JniDB;
-import org.fusesource.rocksdbjni.internal.MergeOperator;
-import org.fusesource.rocksdbjni.internal.Options;
-import org.fusesource.rocksdbjni.internal.WriteOptions;
-import org.iq80.leveldb.DBComparator;
+import org.fusesource.rocksdbjni.internal.JniSnapshot;
+import org.fusesource.rocksdbjni.internal.NativeCache;
+import org.fusesource.rocksdbjni.internal.NativeCompactionFilter;
+import org.fusesource.rocksdbjni.internal.NativeComparator;
+import org.fusesource.rocksdbjni.internal.NativeFilterPolicy;
+import org.fusesource.rocksdbjni.internal.NativeLogger;
+import org.fusesource.rocksdbjni.internal.NativeMergeOperator;
+import org.fusesource.rocksdbjni.internal.NativeOptions;
+import org.fusesource.rocksdbjni.internal.NativeReadOptions;
+import org.fusesource.rocksdbjni.internal.NativeWriteOptions;
 import org.iq80.leveldb.DBException;
 import org.iq80.leveldb.DBIterator;
-import org.iq80.leveldb.Logger;
 import org.iq80.leveldb.Range;
-import org.iq80.leveldb.ReadOptions;
 import org.iq80.leveldb.WriteBatch;
 import org.junit.Test;
 
@@ -82,7 +84,7 @@ public class DBTest extends TestCase {
 
   File getTestDirectory(String name) throws IOException {
     File rc = new File(new File("test-data"), name);
-    factory.destroy(rc, new Options().createIfMissing(true));
+    factory.destroy(rc, new NativeOptions().createIfMissing(true));
     rc.mkdirs();
     return rc;
   }
@@ -90,7 +92,7 @@ public class DBTest extends TestCase {
   @Test
   public void testOpen() throws IOException {
 
-    Options options = new Options().createIfMissing(true);
+    NativeOptions options = new NativeOptions().createIfMissing(true);
 
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
@@ -98,7 +100,7 @@ public class DBTest extends TestCase {
     db.close();
 
     // Try again.. this time we expect a failure since it exists.
-    options = new Options().errorIfExists(true);
+    options = new NativeOptions().errorIfExists(true);
     try {
       factory.open(path, options);
       fail("Expected exception.");
@@ -110,26 +112,23 @@ public class DBTest extends TestCase {
   @Test
   public void testRepair() throws IOException, DBException {
     testCRUD();
-    factory.repair(new File(new File("test-data"), getName()), new Options());
+    factory.repair(new File(new File("test-data"), getName()), new NativeOptions());
   }
 
   @Test
   public void testCRUD() throws IOException, DBException
   {
-    Options options = new Options().createIfMissing(true).cacheSize(1024*10*10).numShardBits(6).
-        filterPolicy(new FilterPolicy()
+    NativeCache nativeCache = new NativeCache(10*1024*1024, 6);
+    NativeOptions options = new NativeOptions().createIfMissing(true).
+        cache(nativeCache).
+        filterPolicy(new NativeFilterPolicy(10)
         {
-          public int bitsPerKey()
-          {
-            return 10;
-          }
-
           public String name()
           {
             return "test";
           }
         }).
-        logger(new Logger()
+        infoLog(new NativeLogger()
         {
           public void log(String s)
           {
@@ -140,8 +139,8 @@ public class DBTest extends TestCase {
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
 
-    WriteOptions wo = new WriteOptions().sync(false);
-    ReadOptions ro = new ReadOptions().fillCache(true).verifyChecksums(true);
+    NativeWriteOptions wo = new NativeWriteOptions().sync(false);
+    NativeReadOptions ro = new NativeReadOptions().fillCache(true).verifyChecksums(true);
 
     db.put(bytes("Tampa"), bytes("green"));
     db.put(bytes("London"), bytes("red"));
@@ -163,7 +162,7 @@ public class DBTest extends TestCase {
   @Test
   public void testIterator() throws IOException, DBException {
 
-    Options options = new Options().createIfMissing(true);
+    NativeOptions options = new NativeOptions().createIfMissing(true);
 
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
@@ -194,8 +193,8 @@ public class DBTest extends TestCase {
   @Test
   public void testMerge() throws IOException, DBException {
 
-    Options options = new Options().createIfMissing(true);
-    options.mergeOperator(new MergeOperator()
+    NativeOptions options = new NativeOptions().createIfMissing(true);
+    options.mergeOperator(new NativeMergeOperator()
     {
 
       public byte[] fullMerge(byte[] key, byte[] existing_value, List<byte[]> operandList)
@@ -229,8 +228,10 @@ public class DBTest extends TestCase {
     });
 
     final List<String> messages = Collections.synchronizedList(new ArrayList<String>());
-    options.logger(new Logger() {
-      public void log(String message) {
+    options.infoLog(new NativeLogger()
+    {
+      public void log(String message)
+      {
         messages.add(message);
       }
     });
@@ -238,8 +239,8 @@ public class DBTest extends TestCase {
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
 
-    WriteOptions wo = new WriteOptions().sync(false);
-    ReadOptions ro = new ReadOptions().fillCache(true).verifyChecksums(true);
+    NativeWriteOptions wo = new NativeWriteOptions().sync(false);
+    NativeReadOptions ro = new NativeReadOptions().fillCache(true).verifyChecksums(true);
 
     db.merge(bytes("key"), bytes("abcdef"), wo);
     db.merge(bytes("key"), bytes("ghijkl"), wo);
@@ -254,9 +255,9 @@ public class DBTest extends TestCase {
   }
 
   @Test
-  public void testSnapshot() throws IOException, DBException {
-
-    Options options = new Options().createIfMissing(true);
+  public void testSnapshot() throws IOException, DBException
+  {
+    NativeOptions options = new NativeOptions().createIfMissing(true);
 
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
@@ -265,7 +266,8 @@ public class DBTest extends TestCase {
     db.put(bytes("London"), bytes("red"));
     db.delete(bytes("New York"));
 
-    ReadOptions ro = new ReadOptions().snapshot(db.getSnapshot());
+    JniSnapshot jniSnapshot = db.getSnapshot();
+    NativeReadOptions ro = new NativeReadOptions().snapshot(jniSnapshot);
 
     db.put(bytes("New York"), bytes("blue"));
 
@@ -276,7 +278,7 @@ public class DBTest extends TestCase {
     // after the snapshot
     assertNull(db.get(bytes("New York"), ro));
 
-    ro.snapshot().close();
+    jniSnapshot.close();
 
     // Now try again without the snapshot..
     ro.snapshot(null);
@@ -287,8 +289,8 @@ public class DBTest extends TestCase {
 
   @Test
   public void testCompactRanges() throws IOException, InterruptedException, DBException {
-    Options options = new Options().createIfMissing(true);
-    options.compactionFilter(new CompactionFilter()
+    NativeOptions options = new NativeOptions().createIfMissing(true);
+    options.compactionFilter(new NativeCompactionFilter()
     {
       public boolean filter(byte[] key, byte[] existingValue)
       {
@@ -326,7 +328,7 @@ public class DBTest extends TestCase {
   @Test
   public void testWriteBatch() throws IOException, DBException {
 
-    Options options = new Options().createIfMissing(true);
+    NativeOptions options = new NativeOptions().createIfMissing(true);
 
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
@@ -360,7 +362,7 @@ public class DBTest extends TestCase {
 
   @Test
   public void testApproximateSizes() throws IOException, DBException {
-    Options options = new Options().createIfMissing(true);
+    NativeOptions options = new NativeOptions().createIfMissing(true);
 
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
@@ -385,8 +387,8 @@ public class DBTest extends TestCase {
 
   @Test
   public void testCustomComparator1() throws IOException, DBException {
-    Options options = new Options().createIfMissing(true);
-    options.comparator(new DBComparator() {
+    NativeOptions options = new NativeOptions().createIfMissing(true);
+    options.comparator(new NativeComparator() {
 
       public int compare(byte[] key1, byte[] key2) {
         return new String(key1).compareTo(new String(key2));
@@ -430,22 +432,27 @@ public class DBTest extends TestCase {
 
   @Test
   public void testCustomComparator2() throws IOException, DBException {
-    Options options = new Options().createIfMissing(true);
-    options.comparator(new DBComparator() {
+    NativeOptions options = new NativeOptions().createIfMissing(true);
+    options.comparator(new NativeComparator()
+    {
 
-      public int compare(byte[] key1, byte[] key2) {
+      public int compare(byte[] key1, byte[] key2)
+      {
         return new String(key1).compareTo(new String(key2)) * -1;
       }
 
-      public String name() {
+      public String name()
+      {
         return getName();
       }
 
-      public byte[] findShortestSeparator(byte[] start, byte[] limit) {
+      public byte[] findShortestSeparator(byte[] start, byte[] limit)
+      {
         return start;
       }
 
-      public byte[] findShortSuccessor(byte[] key) {
+      public byte[] findShortSuccessor(byte[] key)
+      {
         return key;
       }
     });
@@ -474,7 +481,7 @@ public class DBTest extends TestCase {
 
   @Test
   public void testSuspendAndResumeCompactions() throws Exception {
-    Options options = new Options().createIfMissing(true);
+    NativeOptions options = new NativeOptions().createIfMissing(true);
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
     db.suspendCompactions();
@@ -487,32 +494,9 @@ public class DBTest extends TestCase {
   }
 
   @Test
-  public void testIssue26() throws IOException {
-
-    JniDBFactory.pushMemoryPool(1024 * 512);
-    try {
-      Options options = new Options();
-      options.createIfMissing(true);
-
-      DB db = factory.open(getTestDirectory(getName()), options);
-
-      for (int i = 0; i < 1024 * 1024; i++) {
-        byte[] key = ByteBuffer.allocate(4).putInt(i).array();
-        byte[] value = ByteBuffer.allocate(4).putInt(-i).array();
-        db.put(key, value);
-        assertTrue(Arrays.equals(db.get(key), value));
-      }
-      db.close();
-    } finally {
-      JniDBFactory.popMemoryPool();
-    }
-
-  }
-
-  @Test
   public void testIssue27() throws IOException {
 
-    Options options = new Options();
+    NativeOptions options = new NativeOptions();
     options.createIfMissing(true);
     DB db = factory.open(getTestDirectory(getName()), options);
     db.close();

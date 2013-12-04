@@ -31,12 +31,9 @@
  */
 package org.fusesource.rocksdbjni;
 
-import java.util.List;
 import org.fusesource.rocksdbjni.internal.*;
 import org.fusesource.rocksdbjni.internal.DB;
 import org.fusesource.rocksdbjni.internal.DBFactory;
-import org.fusesource.rocksdbjni.internal.Options;
-import org.iq80.leveldb.*;
 
 import java.io.*;
 
@@ -99,138 +96,17 @@ public class JniDBFactory implements DBFactory
     NativeCompactionFilter nativeCompactionFilter = null;
     NativeFilterPolicy nativeFilterPolicy = null;
 
-    public void init(Options value) {
-
-      options = new NativeOptions();
-      options.blockRestartInterval(value.blockRestartInterval());
-      options.blockSize(value.blockSize());
-      options.createIfMissing(value.createIfMissing());
-      options.errorIfExists(value.errorIfExists());
-      options.maxOpenFiles(value.maxOpenFiles());
-      options.paranoidChecks(value.paranoidChecks());
-      options.writeBufferSize(value.writeBufferSize());
-      options.disableSeekCompaction(value.disableSeekCompaction());
-      options.disableAutoCompactions(value.disableAutoCompactions());
-      options.maxOpenFiles(value.maxOpenFiles());
-      options.maxBytesForLevelBase(value.maxBytesForLevelBase());
-
-      options.level0SlowdownWritesTrigger(value.level0SlowdownWritesTrigger());
-      options.deleteObsoleteFilesPeriodMicros(value.deleteObsoleteFilesPeriodMicros());
-      options.sourceCompactionFactor(value.sourceCompactionFactor());
-      options.maxBackgroundCompactions(value.maxBackgroundCompactions());
-      options.maxGrandparentOverlapFactor(value.maxGrandparentOverlapFactor());
-      options.numLevels(value.numLevels());
-
-      options.level0FileNumCompactionTrigger(value.level0FileNumCompactionTrigger());
-      options.targetFileSizeBase(value.targetFileSizeBase());
-      options.level0StopWritesTrigger(value.level0StopWritesTrigger());
-      options.maxWriteBufferNumber(value.maxWriteBufferNumber());
-
-
-      switch(value.compressionType()) {
-        case NONE:
-          options.compression(NativeCompressionType.kNoCompression);
-          break;
-        case SNAPPY:
-          options.compression(NativeCompressionType.kSnappyCompression);
-          break;
-      }
-
-
-      if(value.cacheSize()>0 ) {
-        cache = new NativeCache(value.cacheSize(), value.numShardBits());
-        options.cache(cache);
-      }
-
-      final FilterPolicy filterPolicy = value.filterPolicy();
-      if(filterPolicy != null)
-      {
-        nativeFilterPolicy = new NativeFilterPolicy(filterPolicy.bitsPerKey())
-        {
-          @Override
-          public String name()
-          {
-            return filterPolicy.name();
-          }
-        };
-        options.filterPolicy(nativeFilterPolicy);
-      }
-
-      final DBComparator userComparator = value.comparator();
-      if(userComparator!=null) {
-        comparator = new NativeComparator() {
-          @Override
-          public int compare(byte[] key1, byte[] key2) {
-            return userComparator.compare(key1, key2);
-          }
-
-          @Override
-          public String name() {
-            return userComparator.name();
-          }
-        };
-        options.comparator(comparator);
-      }
-
-      final Logger userLogger = value.logger();
-      if(userLogger!=null) {
-        logger = new NativeLogger() {
-          @Override
-          public void log(String message) {
-            userLogger.log(message);
-          }
-        };
-        options.infoLog(logger);
-      }
-
-      final MergeOperator mergeOperator = value.mergeOperator();
-      if(mergeOperator != null)
-      {
-        nativeMergeOperator = new NativeMergeOperator()
-        {
-          @Override
-          public String name()
-          {
-            return mergeOperator.name();
-          }
-
-          @Override
-          public byte[] fullMerge(byte[] key, byte[] existing_value, List<byte[]> operandList)
-          {
-            return mergeOperator.fullMerge(key, existing_value, operandList);
-          }
-
-          @Override
-          public byte[] partialMerge(byte[] key, byte[] left_operand, byte[] right_operand)
-          {
-            return mergeOperator.partialMerge(key, left_operand, right_operand);
-          }
-        };
-
-        options.mergeOperator(nativeMergeOperator);
-      }
-
-      final CompactionFilter compactionFilter = value.compactionFilter();
-      if(compactionFilter != null)
-      {
-        nativeCompactionFilter = new NativeCompactionFilter()
-        {
-          @Override
-          public boolean filter(byte[] key, byte[] existingValue)
-          {
-            return compactionFilter.filter(key, existingValue);
-          }
-
-          @Override
-          public String name()
-          {
-            return compactionFilter.name();
-          }
-        };
-
-        options.compactionFilter(nativeCompactionFilter);
-      }
+    public void init(NativeOptions value)
+    {
+      options = value;
+      cache = value.cache();
+      comparator = value.comparator();
+      logger = value.infoLog();
+      nativeMergeOperator = value.mergeOperator();
+      nativeCompactionFilter = value.nativeCompactionFilter();
+      nativeFilterPolicy = value.filterPolicy();
     }
+
     public void close() {
       if(cache!=null) {
         cache.delete();
@@ -241,10 +117,22 @@ public class JniDBFactory implements DBFactory
       if(logger!=null) {
         logger.delete();
       }
+      if(nativeMergeOperator != null)
+      {
+        nativeMergeOperator.delete();
+      }
+      if(nativeCompactionFilter != null)
+      {
+        nativeCompactionFilter.delete();
+      }
+      if(nativeFilterPolicy != null)
+      {
+        nativeFilterPolicy.delete();
+      }
     }
   }
 
-  public DB open(File path, Options options) throws IOException {
+  public DB open(File path, NativeOptions options) throws IOException {
     NativeDB db=null;
     OptionsResourceHolder holder = new OptionsResourceHolder();
     try {
@@ -260,7 +148,7 @@ public class JniDBFactory implements DBFactory
     return (DB) new JniDB(db, holder.cache, holder.comparator, holder.logger);
   }
 
-  public void destroy(File path, Options options) throws IOException {
+  public void destroy(File path, NativeOptions options) throws IOException {
     OptionsResourceHolder holder = new OptionsResourceHolder();
     try {
       holder.init(options);
@@ -270,7 +158,7 @@ public class JniDBFactory implements DBFactory
     }
   }
 
-  public void repair(File path, Options options) throws IOException {
+  public void repair(File path, NativeOptions options) throws IOException {
     OptionsResourceHolder holder = new OptionsResourceHolder();
     try {
       holder.init(options);

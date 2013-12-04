@@ -61,6 +61,7 @@ public class Options {
   private int level0SlowdownWritesTrigger = 8;
   private FilterPolicy filterPolicy;
   private int numShardBits;
+  private NativeCache nativeCache;
 
   static void checkArgNotNull(Object value, String name) {
     if(value==null) {
@@ -82,6 +83,17 @@ public class Options {
   public boolean errorIfExists()
   {
     return errorIfExists;
+  }
+
+  public Options createNativeCache(NativeCache nativeCache)
+  {
+    this.nativeCache = nativeCache;
+    return this;
+  }
+
+  public NativeCache nativeCache()
+  {
+    return nativeCache;
   }
 
   public Options disableSeekCompaction(boolean disableSeekCompaction)
