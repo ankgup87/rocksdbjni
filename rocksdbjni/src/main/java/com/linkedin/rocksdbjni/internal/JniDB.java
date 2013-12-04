@@ -24,8 +24,10 @@ public class JniDB implements DB {
 
   public void close() {
     if( db!=null ) {
-      db.delete();
-      db = null;
+
+      // TODO: Fix this. Use case: Cache is shared between two DBs. First DB is closed which deletes DB and cache pointer. Second DB deletion causes segmentation fault
+      /*db.delete();
+      db = null;*/
       if(cache!=null) {
         cache.delete();
         cache = null;

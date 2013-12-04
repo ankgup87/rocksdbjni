@@ -65,7 +65,7 @@ public class NativeCache extends NativeObject {
     static int SIZEOF;
   }
 
-  private long globalRef;
+  private volatile long globalRef;
 
   public NativeCache(long capacity, int numShardBits) {
     super(CacheJNI.create());

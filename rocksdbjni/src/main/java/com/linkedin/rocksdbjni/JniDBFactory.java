@@ -104,13 +104,13 @@ public class JniDBFactory implements DBFactory
           break;
       }
 
-      if(options.cache() != null)
+      if(value.nativeCache() != null)
       {
-        if(!options.cache().isAllocated())
+        if(!value.nativeCache().isAllocated())
         {
           throw new RuntimeException("Cache is not allocated");
         }
-        cache = options.cache();
+        cache = value.nativeCache();
         options.cache(value.nativeCache());
       }
 
