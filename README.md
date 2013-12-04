@@ -1,3 +1,14 @@
+Description
+----
+RocksDB JNI gives you a Java interface to the RocksDB C++ library which is an embeddable persistent key-value store for fast storage.
+
+It exposes JNI layer for CRUD operations, merge operators, compaction filters, cache, filter policy, rocksdb specific options etc. Its an ongoing project and some parts of rocksdb like Env, HdfsEnv are yet to be exposed by JNI layer.
+
+For examples, please see DBTest.java class in the repo.
+
+Building JNI
+----
+
 The following are instructions to get RocksDB JNI layer running. 
 This has been tested on RHEL 6.1 (2.6.32-131) with GCC 4.7.2. 
 
