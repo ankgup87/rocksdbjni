@@ -43,7 +43,7 @@ public class Options {
   private boolean paranoidChecks = false;
   private DBComparator comparator;
   private Logger logger = null;
-  private long cacheSize;
+  private NativeCache nativeCache;
 
   private CompactionFilter compactionFilter;
   private MergeOperator _mergeOperator;
@@ -60,8 +60,6 @@ public class Options {
   private long deleteObsoleteFilesPeriodMicros = 6 * 60 * 60 * 1000000;
   private int level0SlowdownWritesTrigger = 8;
   private FilterPolicy filterPolicy;
-  private int numShardBits;
-  private NativeCache nativeCache;
 
   static void checkArgNotNull(Object value, String name) {
     if(value==null) {
@@ -83,17 +81,6 @@ public class Options {
   public boolean errorIfExists()
   {
     return errorIfExists;
-  }
-
-  public Options createNativeCache(NativeCache nativeCache)
-  {
-    this.nativeCache = nativeCache;
-    return this;
-  }
-
-  public NativeCache nativeCache()
-  {
-    return nativeCache;
   }
 
   public Options disableSeekCompaction(boolean disableSeekCompaction)
@@ -312,21 +299,12 @@ public class Options {
     return this;
   }
 
-  public int numShardBits() {
-    return numShardBits;
+  public NativeCache nativeCache() {
+    return nativeCache;
   }
 
-  public Options numShardBits(int numShardBits) {
-    this.numShardBits = numShardBits;
-    return this;
-  }
-
-  public long cacheSize() {
-    return cacheSize;
-  }
-
-  public Options cacheSize(long cacheSize) {
-    this.cacheSize = cacheSize;
+  public Options nativeCache(NativeCache nativeCache) {
+    this.nativeCache = nativeCache;
     return this;
   }
 
@@ -384,5 +362,4 @@ public class Options {
     return this;
   }
 }
-
 

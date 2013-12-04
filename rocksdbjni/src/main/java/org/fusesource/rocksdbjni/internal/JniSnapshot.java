@@ -31,12 +31,11 @@
  */
 package org.fusesource.rocksdbjni.internal;
 
-import org.iq80.leveldb.Snapshot;
-
 /**
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
-public class JniSnapshot implements Snapshot {
+public class JniSnapshot implements Snapshot
+{
 
     private final NativeDB db;
     private final NativeSnapshot snapshot;

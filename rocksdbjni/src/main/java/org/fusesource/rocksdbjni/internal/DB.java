@@ -10,8 +10,6 @@ import java.io.Closeable;
 import java.util.Map;
 import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.Range;
-import org.iq80.leveldb.ReadOptions;
-import org.iq80.leveldb.Snapshot;
 import org.iq80.leveldb.WriteBatch;
 
 
@@ -21,10 +19,10 @@ import org.iq80.leveldb.WriteBatch;
 public interface DB extends Iterable<Map.Entry<byte[], byte[]>>, Closeable {
 
   public byte[] get(byte[] key) throws DBException;
-  public byte[] get(byte[] key, NativeReadOptions options) throws DBException;
+  public byte[] get(byte[] key, ReadOptions options) throws DBException;
 
   public DBIterator iterator();
-  public DBIterator iterator(NativeReadOptions options);
+  public DBIterator iterator(ReadOptions options);
 
   public void merge(byte[] key, byte[] value) throws DBException;
   public void put(byte[] key, byte[] value) throws DBException;
@@ -37,23 +35,23 @@ public interface DB extends Iterable<Map.Entry<byte[], byte[]>>, Closeable {
    * @return null if options.isSnapshot()==false otherwise returns a snapshot
    * of the DB after this operation.
    */
-  public JniSnapshot put(byte[] key, byte[] value, NativeWriteOptions options) throws DBException;
+  public Snapshot put(byte[] key, byte[] value, WriteOptions options) throws DBException;
 
-  public JniSnapshot merge(byte[] key, byte[] value, NativeWriteOptions options) throws DBException;
-
-  /**
-   * @return null if options.isSnapshot()==false otherwise returns a snapshot
-   * of the DB after this operation.
-   */
-  public JniSnapshot delete(byte[] key, NativeWriteOptions options) throws DBException;
+  public Snapshot merge(byte[] key, byte[] value, WriteOptions options) throws DBException;
 
   /**
    * @return null if options.isSnapshot()==false otherwise returns a snapshot
    * of the DB after this operation.
    */
-  public JniSnapshot write(WriteBatch updates, NativeWriteOptions options) throws DBException;
+  public Snapshot delete(byte[] key, WriteOptions options) throws DBException;
 
-  public JniSnapshot getSnapshot();
+  /**
+   * @return null if options.isSnapshot()==false otherwise returns a snapshot
+   * of the DB after this operation.
+   */
+  public Snapshot write(WriteBatch updates, WriteOptions options) throws DBException;
+
+  public Snapshot getSnapshot();
 
   public long[] getApproximateSizes(Range... ranges);
   public String getProperty(String name);
@@ -77,6 +75,4 @@ public interface DB extends Iterable<Map.Entry<byte[], byte[]>>, Closeable {
    * @throws DBException
    */
   public void compactRange(byte[] begin, byte[] end) throws DBException;
-
-  public NativeCache cache();
 }

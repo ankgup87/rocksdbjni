@@ -35,7 +35,6 @@ package org.fusesource.rocksdbjni.internal;
 import org.iq80.leveldb.DBException;
 import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.Range;
-import org.iq80.leveldb.Snapshot;
 import org.iq80.leveldb.WriteBatch;
 
 
@@ -81,15 +80,15 @@ public class JniDB implements DB {
     if( db==null ) {
       throw new DBException("Closed");
     }
-    return get(key, new NativeReadOptions());
+    return get(key, new ReadOptions());
   }
 
-  public byte[] get(byte[] key, NativeReadOptions options) throws DBException {
+  public byte[] get(byte[] key, ReadOptions options) throws DBException {
     if( db==null ) {
       throw new DBException("Closed");
     }
     try {
-      return db.get(options, key);
+      return db.get(convert(options), key);
     } catch (NativeDB.DBException e) {
       if(e.isNotFound()) {
         return null;
@@ -99,85 +98,85 @@ public class JniDB implements DB {
   }
 
   public DBIterator iterator() {
-    return iterator(new NativeReadOptions());
+    return iterator(new ReadOptions());
   }
 
-  public DBIterator iterator(NativeReadOptions options) {
+  public DBIterator iterator(ReadOptions options) {
     if( db==null ) {
       throw new DBException("Closed");
     }
-    return new JniDBIterator(db.iterator(options));
+    return new JniDBIterator(db.iterator(convert(options)));
   }
 
   public void put(byte[] key, byte[] value) throws DBException {
-    put(key, value, new NativeWriteOptions());
+    put(key, value, new WriteOptions());
   }
 
   public void merge(byte[] key, byte[] value) throws DBException {
-    merge(key, value, new NativeWriteOptions());
+    merge(key, value, new WriteOptions());
   }
 
   public void delete(byte[] key) throws DBException {
-    delete(key, new NativeWriteOptions());
+    delete(key, new WriteOptions());
   }
 
   public void write(WriteBatch updates) throws DBException {
-    write(updates, new NativeWriteOptions());
+    write(updates, new WriteOptions());
   }
 
   public WriteBatch createWriteBatch() {
     return new JniWriteBatch(new NativeWriteBatch());
   }
 
-  public JniSnapshot put(byte[] key, byte[] value, NativeWriteOptions options) throws DBException {
+  public Snapshot put(byte[] key, byte[] value, WriteOptions options) throws DBException {
     if( db==null ) {
       throw new DBException("Closed");
     }
     try {
-      db.put(options, key, value);
+      db.put(convert(options), key, value);
       return null;
     } catch (NativeDB.DBException e) {
       throw new DBException(e.getMessage(), e);
     }
   }
 
-  public JniSnapshot merge(byte[] key, byte[] value, NativeWriteOptions options) throws DBException {
+  public Snapshot merge(byte[] key, byte[] value, WriteOptions options) throws DBException {
     if( db==null ) {
       throw new DBException("Closed");
     }
     try {
-      db.merge(options, key, value);
+      db.merge(convert(options), key, value);
       return null;
     } catch (NativeDB.DBException e) {
       throw new DBException(e.getMessage(), e);
     }
   }
 
-  public JniSnapshot delete(byte[] key, NativeWriteOptions options) throws DBException {
+  public Snapshot delete(byte[] key, WriteOptions options) throws DBException {
     if( db==null ) {
       throw new DBException("Closed");
     }
     try {
-      db.delete(options, key);
+      db.delete(convert(options), key);
       return null;
     } catch (NativeDB.DBException e) {
       throw new DBException(e.getMessage(), e);
     }
   }
 
-  public JniSnapshot write(WriteBatch updates, NativeWriteOptions options) throws DBException {
+  public Snapshot write(WriteBatch updates, WriteOptions options) throws DBException {
     if( db==null ) {
       throw new DBException("Closed");
     }
     try {
-      db.write(options, ((JniWriteBatch) updates).writeBatch());
+      db.write(convert(options), ((JniWriteBatch) updates).writeBatch());
       return null;
     } catch (NativeDB.DBException e) {
       throw new DBException(e.getMessage(), e);
     }
   }
 
-  public JniSnapshot getSnapshot() {
+  public Snapshot getSnapshot() {
     if( db==null ) {
       throw new DBException("Closed");
     }
@@ -211,16 +210,33 @@ public class JniDB implements DB {
   {
   }
 
+  private NativeReadOptions convert(ReadOptions options) {
+    if(options==null) {
+      return null;
+    }
+    NativeReadOptions rc = new NativeReadOptions();
+    rc.fillCache(options.fillCache());
+    rc.verifyChecksums(options.verifyChecksums());
+    if(options.snapshot()!=null) {
+      rc.snapshot(((JniSnapshot) options.snapshot()).snapshot());
+    }
+    return rc;
+  }
+
+  private NativeWriteOptions convert(WriteOptions options) {
+    if(options==null) {
+      return null;
+    }
+    NativeWriteOptions rc = new NativeWriteOptions();
+    rc.sync(options.sync());
+    return rc;
+  }
+
   public void compactRange(byte[] begin, byte[] end) throws DBException {
     if( db==null ) {
       throw new DBException("Closed");
     }
     db.compactRange(begin, end);
-  }
-
-  public NativeCache cache()
-  {
-    return cache;
   }
 
 //    private static class Suspension {
