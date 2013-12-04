@@ -65,7 +65,7 @@ public abstract class NativeCompactionFilter extends NativeObject
         throw new RuntimeException("jni call failed: NewGlobalRef");
       }
       CompactionFilterJNI struct = new CompactionFilterJNI();
-      struct.filter_method = NativeDB.DBJNI.GetMethodID(this.getClass(), "compare", "(JJ)Z");
+      struct.filter_method = NativeDB.DBJNI.GetMethodID(this.getClass(), "filter", "(JJ)Z");
       if( struct.filter_method==0 ) {
         throw new RuntimeException("jni call failed: GetMethodID");
       }

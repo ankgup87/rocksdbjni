@@ -340,7 +340,7 @@ public class Options {
   }
 
   public Options compactionFilter(CompactionFilter compactionFilter) {
-    compactionFilter = compactionFilter;
+    this.compactionFilter = compactionFilter;
     return this;
   }
 
