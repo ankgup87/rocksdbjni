@@ -1,4 +1,4 @@
-package org.fusesource.rocksdbjni;
+package com.linkedin.rocksdbjni;
 
 public class All {
 }
