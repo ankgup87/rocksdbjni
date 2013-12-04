@@ -6,6 +6,8 @@ It exposes JNI layer for CRUD operations, merge operators, compaction filters, c
 
 For examples, please see DBTest.java class in the repo.
 
+Derived from FuseSource's LevelDB JNI wrapper
+
 Building JNI
 ----
 
