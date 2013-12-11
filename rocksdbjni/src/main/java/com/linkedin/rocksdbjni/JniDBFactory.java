@@ -94,13 +94,22 @@ public class JniDBFactory implements DBFactory
       options.level0StopWritesTrigger(value.level0StopWritesTrigger());
       options.maxWriteBufferNumber(value.maxWriteBufferNumber());
 
-
       switch(value.compressionType()) {
         case NONE:
           options.compression(NativeCompressionType.kNoCompression);
           break;
         case SNAPPY:
           options.compression(NativeCompressionType.kSnappyCompression);
+          break;
+      }
+
+      switch (value.compactionStyle())
+      {
+        case LEVEL:
+          options.compactionStyle(NativeCompactionStyle.kCompactionStyleLevel);
+          break;
+        case UNIVERSAL:
+          options.compactionStyle(NativeCompactionStyle.kCompactionStyleUniversal);
           break;
       }
 

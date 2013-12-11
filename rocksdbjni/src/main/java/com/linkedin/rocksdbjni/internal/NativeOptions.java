@@ -45,13 +45,15 @@ public class NativeOptions {
   private int level0_file_num_compaction_trigger = 4;
   private int level0_stop_writes_trigger = 12;
   private int target_file_size_base = 2 * 1048576;
-  private int max_bytes_for_level_base = 10 * 1048576;
+  private long max_bytes_for_level_base = 10 * 1048576;
   private int source_compaction_factor = 1;
   private int max_grandparent_overlap_factor = 10;
   private int max_background_compactions = 1;
   private boolean disable_auto_compactions = false;
   @JniField(cast="uint64_t")
   private long delete_obsolete_files_period_micros = 6 * 60 * 60 * 1000000;
+  @JniField(cast="uint64_t")
+  private long max_manifest_file_size = Integer.MAX_VALUE - 1;
   private int level0_slowdown_writes_trigger = 8;
   private int max_write_buffer_number = 2;
 
@@ -79,6 +81,9 @@ public class NativeOptions {
 
   @JniField(cast="rocksdb::CompressionType")
   private int compression = NativeCompressionType.kSnappyCompression.value;
+
+  @JniField(cast="rocksdb::CompactionStyle")
+  private int compaction_style = NativeCompactionStyle.kCompactionStyleLevel.value;
 
   @JniField(flags={SHARED_PTR}, cast="rocksdb::MergeOperator*")
   private long merge_operator = 0;
@@ -128,6 +133,14 @@ public class NativeOptions {
   }
   public long deleteObsoleteFilesPeriodMicros() {
     return delete_obsolete_files_period_micros;
+  }
+
+  public NativeOptions maxManifestFileSize(long value) {
+    this.max_manifest_file_size = value;
+    return this;
+  }
+  public long maxManifestFileSize() {
+    return max_manifest_file_size;
   }
 
   public NativeOptions paranoidChecks(boolean value) {
@@ -194,11 +207,11 @@ public class NativeOptions {
     return source_compaction_factor;
   }
 
-  public NativeOptions maxBytesForLevelBase(int value) {
+  public NativeOptions maxBytesForLevelBase(long value) {
     this.max_bytes_for_level_base = value;
     return this;
   }
-  public int maxBytesForLevelBase() {
+  public long maxBytesForLevelBase() {
     return max_bytes_for_level_base;
   }
 
@@ -334,6 +347,20 @@ public class NativeOptions {
     } else {
       return NativeCompressionType.kSnappyCompression;
     }
+  }
+
+  public NativeCompactionStyle compactionStyle() {
+    if(compaction_style == NativeCompactionStyle.kCompactionStyleLevel.value) {
+      return NativeCompactionStyle.kCompactionStyleLevel;
+    } else {
+      return NativeCompactionStyle.kCompactionStyleUniversal;
+    }
+  }
+
+  public NativeOptions compactionStyle(NativeCompactionStyle nativeCompactionStyle)
+  {
+    this.compaction_style = nativeCompactionStyle.value;
+    return this;
   }
 
   public NativeOptions compression(NativeCompressionType compression) {

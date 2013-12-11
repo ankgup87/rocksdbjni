@@ -48,11 +48,8 @@ public class NativeCache extends NativeObject {
     @JniField(cast="rocksdb::Cache*", flags={SHARED_PTR})
     long lruCache;
 
-    @JniField(cast="jlong", flags={POINTER_FIELD})
+    @JniField(cast="jlong")
     long size;
-
-    @JniField(cast="jint", flags={POINTER_FIELD})
-    long num_shard_bits;
 
     @JniMethod(flags={CONSTANT_INITIALIZER})
     private static final native void init();
@@ -79,7 +76,6 @@ public class NativeCache extends NativeObject {
       CacheJNI cacheJNI = new CacheJNI();
       cacheJNI.lruCache = 0;
       cacheJNI.size = capacity;
-      cacheJNI.num_shard_bits = numShardBits;
 
       CacheJNI.memmove(self, cacheJNI, CacheJNI.SIZEOF);
     }

@@ -38,7 +38,7 @@ public class Options {
 
   private int blockRestartInterval = 16;
   private int blockSize = 4 * 1024;
-  private CompressionType compressionType = CompressionType.SNAPPY;
+  private CompressionType compressionType = CompressionType.NONE;
   private boolean verifyChecksums = true;
   private boolean paranoidChecks = false;
   private DBComparator comparator;
@@ -52,14 +52,16 @@ public class Options {
   private int level0FileNumCompactionTrigger = 4;
   private int level0StopWritesTrigger = 12;
   private int targetFileSizeBase = 2 * 1048576;
-  private int maxBytesForLevelBase = 10 * 1048576;
+  private long maxBytesForLevelBase = 10 * 1048576;
   private int sourceCompactionFactor = 1;
   private int maxGrandparentOverlapFactor = 10;
   private int maxBackgroundCompactions = 1;
   private boolean disableAutoCompactions = false;
   private long deleteObsoleteFilesPeriodMicros = 6 * 60 * 60 * 1000000;
   private int level0SlowdownWritesTrigger = 8;
+  private long maxManifestFileSize = Integer.MAX_VALUE - 1;
   private FilterPolicy filterPolicy;
+  private CompactionStyle _compactionStyle = CompactionStyle.LEVEL;
 
   static void checkArgNotNull(Object value, String name) {
     if(value==null) {
@@ -133,7 +135,7 @@ public class Options {
     return this;
   }
 
-  public int maxBytesForLevelBase()
+  public long maxBytesForLevelBase()
   {
     return maxBytesForLevelBase;
   }
@@ -149,6 +151,17 @@ public class Options {
     return level0SlowdownWritesTrigger;
   }
 
+  public Options maxManifestFileSize(long maxManifestFileSize)
+  {
+    this.maxManifestFileSize = maxManifestFileSize;
+    return this;
+  }
+
+  public long maxManifestFileSize()
+  {
+    return maxManifestFileSize;
+  }
+
   public Options deleteObsoleteFilesPeriodMicros(long deleteObsoleteFilesPeriodMicros)
   {
     this.deleteObsoleteFilesPeriodMicros = deleteObsoleteFilesPeriodMicros;
@@ -160,7 +173,7 @@ public class Options {
     return deleteObsoleteFilesPeriodMicros;
   }
 
-  public Options maxBytesForLevelBase(int maxBytesForLevelBase)
+  public Options maxBytesForLevelBase(long maxBytesForLevelBase)
   {
     this.maxBytesForLevelBase = maxBytesForLevelBase;
     return this;
@@ -285,6 +298,18 @@ public class Options {
   {
     checkArgNotNull(compressionType, "compressionType");
     this.compressionType = compressionType;
+    return this;
+  }
+
+  public CompactionStyle compactionStyle()
+  {
+    return _compactionStyle;
+  }
+
+  public Options compactionStyle(CompactionStyle compactionStyle)
+  {
+    checkArgNotNull(compactionStyle, "CompactionStyle");
+    _compactionStyle = compactionStyle;
     return this;
   }
 

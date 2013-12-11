@@ -81,7 +81,7 @@ public abstract class NativeMergeOperator extends NativeObject
         throw new RuntimeException("jni call failed: GetMethodID");
       }
 
-      struct.full_merge_method = NativeDB.DBJNI.GetMethodID(this.getClass(), "full_merge", "(JJ[J)[B");
+        struct.full_merge_method = NativeDB.DBJNI.GetMethodID(this.getClass(), "full_merge", "(JJ[J)[B");
       if( struct.full_merge_method==0 ) {
         throw new RuntimeException("jni call failed: GetMethodID");
       }

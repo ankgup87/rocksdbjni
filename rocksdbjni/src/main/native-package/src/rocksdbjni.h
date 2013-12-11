@@ -158,7 +158,7 @@ struct JNIMergeOperator : public rocksdb::MergeOperator {
         new_value->assign((char* ) b, env->GetArrayLength(rc));
       }
 
-      env->ReleaseByteArrayElements(rc, b, JNI_ABORT);
+      env->ReleaseByteArrayElements(rc, b, 0);
       env->DeleteLocalRef(rc);
     }
 
@@ -193,7 +193,7 @@ struct JNIMergeOperator : public rocksdb::MergeOperator {
       {
         sArray[i] = rocksdb::Slice(operand_list[i]);
         jlong longPtr = (jlong)(intptr_t)&sArray[i];
-        env->SetLongArrayRegion(buf, i, 1, &longPtr);;
+        env->SetLongArrayRegion(buf, i, 1, &longPtr);
       }
 
       jbyteArray rc = (jbyteArray)env->CallObjectMethod(target, full_merge_method, (jlong)(intptr_t)&key, existingPtr, buf);
@@ -211,7 +211,7 @@ struct JNIMergeOperator : public rocksdb::MergeOperator {
         {
           new_value->assign((char* ) b, env->GetArrayLength(rc));
         }
-        env->ReleaseByteArrayElements(rc, b, JNI_ABORT);
+        env->ReleaseByteArrayElements(rc, b, 0);
         env->DeleteLocalRef(rc);
       }
 
@@ -229,7 +229,6 @@ struct JNIMergeOperator : public rocksdb::MergeOperator {
 
 struct JNILRUCache : public rocksdb::Cache {
   jlong size;
-  jint num_shard_bits;
   std::shared_ptr<rocksdb::Cache> lruCache;
 
   rocksdb::Cache::Handle* Insert(const rocksdb::Slice& key, void* value, size_t charge,
@@ -271,7 +270,7 @@ struct JNILRUCache : public rocksdb::Cache {
   {
     if(lruCache.get() == NULL)
     {
-      lruCache = rocksdb::NewLRUCache(size, num_shard_bits);
+      lruCache = rocksdb::NewLRUCache(size);
     }
 
     return lruCache;
@@ -308,6 +307,7 @@ struct JNIBloomFilter : public rocksdb::FilterPolicy {
     return filterPolicy;
   }
 };
+
 #endif
 
 
