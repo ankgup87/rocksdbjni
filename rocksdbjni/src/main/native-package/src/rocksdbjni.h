@@ -38,6 +38,7 @@
 
 #ifdef __cplusplus
 
+#include "db/db_statistics.h"
 #include "rocksdb/db.h"
 #include "rocksdb/options.h"
 #include "rocksdb/write_batch.h"

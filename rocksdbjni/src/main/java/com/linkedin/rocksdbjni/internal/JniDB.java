@@ -14,12 +14,14 @@ public class JniDB implements DB {
   private NativeCache cache;
   private NativeComparator comparator;
   private NativeLogger logger;
+  private long statisticsPtr;
 
-  public JniDB(NativeDB db, NativeCache cache, NativeComparator comparator, NativeLogger logger) {
+  public JniDB(NativeDB db, NativeCache cache, NativeComparator comparator, NativeLogger logger, long statisticsPtr) {
     this.db = db;
     this.cache = cache;
     this.comparator = comparator;
     this.logger = logger;
+    this.statisticsPtr = statisticsPtr;
   }
 
   public void close() {
@@ -41,6 +43,10 @@ public class JniDB implements DB {
         logger = null;
       }
     }
+  }
+
+  public long statisticsPtr() {
+    return statisticsPtr;
   }
 
 

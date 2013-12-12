@@ -1,4 +1,3 @@
-
 package com.linkedin.rocksdbjni.internal;
 
 import org.fusesource.hawtjni.runtime.JniClass;
@@ -94,6 +93,9 @@ public class NativeOptions {
   private long compaction_filter = 0;
   @JniField(flags={FIELD_SKIP})
   private NativeCompactionFilter _compactionFilter = null;
+
+  @JniField(flags={SHARED_PTR}, cast="rocksdb::Statistics*")
+  private long statistics = NativeStatistics.create();
 
   public NativeOptions createIfMissing(boolean value) {
     this.create_if_missing = value;
@@ -380,5 +382,9 @@ public class NativeOptions {
       this.block_cache = 0;
     }
     return this;
+  }
+
+  public long statisticsPtr() {
+    return statistics;
   }
 }

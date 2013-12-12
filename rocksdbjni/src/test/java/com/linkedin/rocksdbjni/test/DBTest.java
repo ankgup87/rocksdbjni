@@ -14,6 +14,7 @@ import com.linkedin.rocksdbjni.internal.NativeCache;
 import com.linkedin.rocksdbjni.internal.Options;
 import com.linkedin.rocksdbjni.internal.ReadOptions;
 import com.linkedin.rocksdbjni.internal.WriteOptions;
+import com.linkedin.rocksdbjni.internal.NativeStatistics;
 import org.iq80.leveldb.DBComparator;
 import org.iq80.leveldb.DBException;
 import org.iq80.leveldb.DBIterator;
@@ -454,6 +455,37 @@ public class DBTest extends TestCase {
   public void assertEquals(byte[] arg1, byte[] arg2) {
     assertTrue(Arrays.equals(arg1, arg2));
   }
+
+  @Test
+  public void testStatistics() throws IOException, DBException {
+
+    Options options = new Options().createIfMissing(true);
+
+    File path = getTestDirectory(getName());
+    DB db = factory.open(path, options);
+
+    db.put(bytes("Tampa"), bytes("green"));
+    db.put(bytes("London"), bytes("red"));
+    db.put(bytes("New York"), bytes("blue"));
+
+    ArrayList<String> expecting = new ArrayList<String>();
+    expecting.add("London");
+    expecting.add("New York");
+    expecting.add("Tampa");
+
+    ArrayList<String> actual = new ArrayList<String>();
+
+    db.get(bytes("London"));
+    db.get(bytes("London"));
+    db.get(bytes("London"));
+
+    // Number of keys read should be 3.
+    assertTrue(NativeStatistics.getTickerCount(db.statisticsPtr(), 16) == 3);
+
+    db.close();
+  }
+
+
 
   //TODO: Fix this when DB deletion is fixed
   /*@Test
