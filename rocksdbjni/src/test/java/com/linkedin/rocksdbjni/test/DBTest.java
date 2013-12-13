@@ -15,6 +15,7 @@ import com.linkedin.rocksdbjni.internal.Options;
 import com.linkedin.rocksdbjni.internal.ReadOptions;
 import com.linkedin.rocksdbjni.internal.WriteOptions;
 import com.linkedin.rocksdbjni.internal.NativeStatistics;
+import com.linkedin.rocksdbjni.internal.NativeHistogramData;
 import org.iq80.leveldb.DBComparator;
 import org.iq80.leveldb.DBException;
 import org.iq80.leveldb.DBIterator;
@@ -481,7 +482,10 @@ public class DBTest extends TestCase {
 
     // Number of keys read should be 3.
     assertTrue(NativeStatistics.getTickerCount(db.statisticsPtr(), 16) == 3);
-
+    // Time spent in IO during DB open
+    NativeHistogramData histogramData = new NativeHistogramData();
+    NativeStatistics.histogramData(db.statisticsPtr(), 0, histogramData);
+    assertTrue(histogramData.getAverage() != 0);
     db.close();
   }
 

@@ -44,7 +44,7 @@ Compile RocksDB JNI
 * git clone https://github.com/ankgup87/rocksdbjni.git 
 * cd rocksdbjni <br/>
 * mvn install -P download -P linux64 <br/>
-* Build will break once as Makefile is not setup correctly for c++11 compilation(TODO: fix this.!) In rocksdbjni-linux64/target/native-build/Makefile, append -std=c++11 to CXX=g++ line. <br/>
+* Build will break once as Makefile is not setup correctly for c++11 compilation(TODO: fix this.!) In rocksdbjni-linux64/target/native-build/Makefile, append -std=c++11 to CXX=g++ line, and append -DROCKSDB_PLATFORM_POSIX -I${ROCKDB_HOME} to CXXFLAGS line. <br/>
 * mvn install -P download -P linux64 <br/>
 
 Output
