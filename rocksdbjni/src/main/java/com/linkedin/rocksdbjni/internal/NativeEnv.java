@@ -14,9 +14,6 @@ public class NativeEnv {
     NativeDB.LIBRARY.load();
   }
 
-  @JniMethod(flags={CPP_DELETE})
-  public static native void delete(long ptr);
-
   @JniMethod(cast="rocksdb::Env*", accessor="rocksdb::Env::Default")
   public static final native long Default();
 
