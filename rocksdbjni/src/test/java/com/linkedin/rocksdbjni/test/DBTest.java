@@ -28,11 +28,7 @@ import static com.linkedin.rocksdbjni.JniDBFactory.bytes;
  */
 public class DBTest extends TestCase {
 
-  static DBFactory factory;
-  static {
-    System.setProperty("library.rocksdbjni.path", "/tmp/feed");
-    factory = JniDBFactory.factory;
-  }
+  DBFactory factory = JniDBFactory.factory;
 
   File getTestDirectory(String name) throws IOException {
     File rc = new File(new File("test-data"), name);
