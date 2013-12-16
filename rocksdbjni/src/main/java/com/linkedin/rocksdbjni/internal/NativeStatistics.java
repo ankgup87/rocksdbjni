@@ -7,6 +7,10 @@ import org.fusesource.hawtjni.runtime.JniMethod;
 import static org.fusesource.hawtjni.runtime.ClassFlag.CPP;
 import static org.fusesource.hawtjni.runtime.MethodFlag.*;
 
+// Ideally we should be mapping this to rocksdb::Statistics and use
+// std::shared_ptr<Statistics> CreateDBStatistics(); from statistics.h
+// But we are not doing so, because there is a bug in casting shared_ptr 
+// to and from the native system.
 @JniClass(name="rocksdb::DBStatistics", flags={CPP})
 public class NativeStatistics {
 

@@ -15,13 +15,15 @@ public class JniDB implements DB {
   private NativeComparator comparator;
   private NativeLogger logger;
   private long statisticsPtr;
+  private long envPtr;
 
-  public JniDB(NativeDB db, NativeCache cache, NativeComparator comparator, NativeLogger logger, long statisticsPtr) {
+  public JniDB(NativeDB db, NativeCache cache, NativeComparator comparator, NativeLogger logger, long statisticsPtr, long envPtr) {
     this.db = db;
     this.cache = cache;
     this.comparator = comparator;
     this.logger = logger;
     this.statisticsPtr = statisticsPtr;
+    this.envPtr = envPtr;
   }
 
   public void close() {
@@ -49,6 +51,9 @@ public class JniDB implements DB {
     return statisticsPtr;
   }
 
+  public long envPtr() {
+    return envPtr;
+  }
 
   public byte[] get(byte[] key) throws DBException
   {

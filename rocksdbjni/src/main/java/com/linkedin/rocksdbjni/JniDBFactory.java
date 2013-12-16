@@ -239,7 +239,7 @@ public class JniDBFactory implements DBFactory
         holder.close();
       }
     }
-    return (DB) new JniDB(db, holder.cache, holder.comparator, holder.logger, holder.options.statisticsPtr());
+    return (DB) new JniDB(db, holder.cache, holder.comparator, holder.logger, holder.options.statisticsPtr(), holder.options.envPtr());
   }
 
   public void destroy(File path, Options options) throws IOException {

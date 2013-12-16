@@ -72,7 +72,8 @@ public class NativeOptions {
   private long info_log = 0;
 
   @JniField(cast="rocksdb::Env*")
-  private long env = DEFAULT_ENV;
+  private long env = NativeEnv.Default();
+
   @JniField(flags={SHARED_PTR}, cast="rocksdb::Cache*")
   private long block_cache = 0;
   @JniField(flags={FIELD_SKIP})
@@ -387,4 +388,9 @@ public class NativeOptions {
   public long statisticsPtr() {
     return statistics;
   }
+
+  public long envPtr() {
+    return env;
+  }
+
 }

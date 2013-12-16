@@ -73,4 +73,6 @@ public interface DB extends Iterable<Map.Entry<byte[], byte[]>>, Closeable {
   public void compactRange(byte[] begin, byte[] end) throws DBException;
 
   public long statisticsPtr();
+
+  public long envPtr();
 }

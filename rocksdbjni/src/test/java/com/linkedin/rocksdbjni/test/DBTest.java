@@ -2,20 +2,9 @@
 package com.linkedin.rocksdbjni.test;
 
 import com.linkedin.rocksdbjni.JniDBFactory;
+import com.linkedin.rocksdbjni.internal.*;
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import com.linkedin.rocksdbjni.internal.CompactionFilter;
-import com.linkedin.rocksdbjni.internal.DB;
-import com.linkedin.rocksdbjni.internal.DBFactory;
-import com.linkedin.rocksdbjni.internal.FilterPolicy;
-import com.linkedin.rocksdbjni.internal.JniDB;
-import com.linkedin.rocksdbjni.internal.MergeOperator;
-import com.linkedin.rocksdbjni.internal.NativeCache;
-import com.linkedin.rocksdbjni.internal.Options;
-import com.linkedin.rocksdbjni.internal.ReadOptions;
-import com.linkedin.rocksdbjni.internal.WriteOptions;
-import com.linkedin.rocksdbjni.internal.NativeStatistics;
-import com.linkedin.rocksdbjni.internal.NativeHistogramData;
 import org.iq80.leveldb.DBComparator;
 import org.iq80.leveldb.DBException;
 import org.iq80.leveldb.DBIterator;
@@ -39,7 +28,11 @@ import static com.linkedin.rocksdbjni.JniDBFactory.bytes;
  */
 public class DBTest extends TestCase {
 
-  DBFactory factory = JniDBFactory.factory;
+  static DBFactory factory;
+  static {
+    System.setProperty("library.rocksdbjni.path", "/tmp/feed");
+    factory = JniDBFactory.factory;
+  }
 
   File getTestDirectory(String name) throws IOException {
     File rc = new File(new File("test-data"), name);
@@ -487,6 +480,16 @@ public class DBTest extends TestCase {
     NativeStatistics.histogramData(db.statisticsPtr(), 0, histogramData);
     assertTrue(histogramData.getAverage() != 0);
     db.close();
+  }
+
+  @Test
+  public void testEnvExposure() throws IOException {
+    Options options = new Options().createIfMissing(true);
+
+    File path = getTestDirectory(getName());
+    DB db = factory.open(path, options);
+    NativeEnv.setNumBackgroundThreads(db.envPtr(), 5, 0);
+    // There is no way for us to verify the actual number of background threads.
   }
 
 

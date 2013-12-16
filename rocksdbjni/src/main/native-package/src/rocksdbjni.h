@@ -45,6 +45,7 @@
 #include "rocksdb/cache.h"
 #include "rocksdb/comparator.h"
 #include "rocksdb/env.h"
+#include "hdfs/env_hdfs.h"
 #include "rocksdb/slice.h"
 #include "rocksdb/merge_operator.h"
 #include "rocksdb/compaction_filter.h"
