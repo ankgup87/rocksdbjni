@@ -66,6 +66,7 @@ public class JniDBFactory implements DBFactory
     NativeMergeOperator nativeMergeOperator = null;
     NativeCompactionFilter nativeCompactionFilter = null;
     NativeFilterPolicy nativeFilterPolicy = null;
+    long envPtr = 0;
 
     public void init(Options value) {
 
@@ -93,6 +94,7 @@ public class JniDBFactory implements DBFactory
       options.targetFileSizeBase(value.targetFileSizeBase());
       options.level0StopWritesTrigger(value.level0StopWritesTrigger());
       options.maxWriteBufferNumber(value.maxWriteBufferNumber());
+      options.envPtr(value.envPtr());
 
       switch(value.compressionType()) {
         case NONE:

@@ -72,7 +72,7 @@ public class NativeOptions {
   private long info_log = 0;
 
   @JniField(cast="rocksdb::Env*")
-  private long env = NativeEnv.Default();
+  private long env;
 
   @JniField(flags={SHARED_PTR}, cast="rocksdb::Cache*")
   private long block_cache = 0;
@@ -391,6 +391,14 @@ public class NativeOptions {
 
   public long envPtr() {
     return env;
+  }
+
+  public void envPtr(long ptr) {
+    if (ptr > 0) {
+      env = ptr;
+    } else {
+      env = NativeEnv.Default();
+    }
   }
 
 }

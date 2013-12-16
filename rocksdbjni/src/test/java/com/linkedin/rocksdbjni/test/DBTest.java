@@ -458,13 +458,6 @@ public class DBTest extends TestCase {
     db.put(bytes("London"), bytes("red"));
     db.put(bytes("New York"), bytes("blue"));
 
-    ArrayList<String> expecting = new ArrayList<String>();
-    expecting.add("London");
-    expecting.add("New York");
-    expecting.add("Tampa");
-
-    ArrayList<String> actual = new ArrayList<String>();
-
     db.get(bytes("London"));
     db.get(bytes("London"));
     db.get(bytes("London"));
@@ -474,20 +467,44 @@ public class DBTest extends TestCase {
     // Time spent in IO during DB open
     NativeHistogramData histogramData = new NativeHistogramData();
     NativeStatistics.histogramData(db.statisticsPtr(), 0, histogramData);
+
     assertTrue(histogramData.getAverage() != 0);
     db.close();
   }
 
   @Test
-  public void testEnvExposure() throws IOException {
-    Options options = new Options().createIfMissing(true);
+  public void testEnvSharingBetweenDBs() throws IOException {
+    Options options1 = new Options().createIfMissing(true);
 
-    File path = getTestDirectory(getName());
-    DB db = factory.open(path, options);
-    NativeEnv.setNumBackgroundThreads(db.envPtr(), 5, 0);
-    // There is no way for us to verify the actual number of background threads.
+    File path1 = getTestDirectory(getName());
+    DB db1 = factory.open(path1, options1);
+    NativeEnv.setNumBackgroundThreads(db1.envPtr(), 5, 0);
+    // IntelliJ shows that 5 background threads get created!
+
+    db1.put(bytes("London"), bytes("red"));
+    db1.get(bytes("London"));
+    db1.get(bytes("London"));
+    db1.get(bytes("London"));
+
+    assertTrue(NativeStatistics.getTickerCount(db1.statisticsPtr(), 16) == 3);
+
+    // Reuse the env in a new db
+    Options options2 = new Options().createIfMissing(true).envPtr(db1.envPtr());
+    File path2 = getTestDirectory(getName() + "_2");
+    DB db2 = factory.open(path2, options2);
+
+    db2.put(bytes("Tampa"), bytes("green"));
+    db2.get(bytes("Tampa"));
+    db2.get(bytes("Tampa"));
+    db2.get(bytes("Tampa"));
+
+    assertTrue(NativeStatistics.getTickerCount(db2.statisticsPtr(), 16) == 3);
+
+    // Even though the env ptr is shared between the dbs, there should not be a SIGSEV while closing the dbs.
+    db1.close();
+    db2.close();
+    //Intellij shows that background threads are created only once, hurray!
   }
-
 
 
   //TODO: Fix this when DB deletion is fixed

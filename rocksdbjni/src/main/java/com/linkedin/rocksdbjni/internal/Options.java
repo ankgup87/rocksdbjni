@@ -62,6 +62,7 @@ public class Options {
   private long maxManifestFileSize = Integer.MAX_VALUE - 1;
   private FilterPolicy filterPolicy;
   private CompactionStyle _compactionStyle = CompactionStyle.LEVEL;
+  private long envPtr = 0;
 
   static void checkArgNotNull(Object value, String name) {
     if(value==null) {
@@ -384,6 +385,15 @@ public class Options {
 
   public Options paranoidChecks(boolean paranoidChecks) {
     this.paranoidChecks = paranoidChecks;
+    return this;
+  }
+
+  public long envPtr() {
+    return envPtr;
+  }
+
+  public Options envPtr(long ptr) {
+    envPtr = ptr;
     return this;
   }
 }
