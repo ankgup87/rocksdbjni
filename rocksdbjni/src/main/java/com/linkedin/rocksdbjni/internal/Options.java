@@ -1,6 +1,5 @@
 package com.linkedin.rocksdbjni.internal;
 
-
 /**
  * @author Ankit Gupta
  */
@@ -22,12 +21,16 @@ package com.linkedin.rocksdbjni.internal;
  * limitations under the License.
  */
 
-import org.iq80.leveldb.CompressionType;
-import org.iq80.leveldb.DBComparator;
-import org.iq80.leveldb.Logger;
+import com.linkedin.rocksdbjni.CompactionFilter;
+import com.linkedin.rocksdbjni.DBComparator;
+import com.linkedin.rocksdbjni.FilterPolicy;
+import com.linkedin.rocksdbjni.DBLogger;
+import com.linkedin.rocksdbjni.Utils;
+import com.linkedin.rocksdbjni.types.CompactionStyle;
+import com.linkedin.rocksdbjni.types.CompressionType;
 
-
-public class Options {
+public class Options
+{
 
   private boolean createIfMissing = true;
   private boolean errorIfExists;
@@ -42,7 +45,7 @@ public class Options {
   private boolean verifyChecksums = true;
   private boolean paranoidChecks = false;
   private DBComparator comparator;
-  private Logger logger = null;
+  private DBLogger logger = null;
   private NativeCache nativeCache;
 
   private CompactionFilter compactionFilter;
@@ -63,12 +66,6 @@ public class Options {
   private FilterPolicy filterPolicy;
   private CompactionStyle _compactionStyle = CompactionStyle.LEVEL;
   private long envPtr = 0;
-
-  static void checkArgNotNull(Object value, String name) {
-    if(value==null) {
-      throw new IllegalArgumentException("The "+name+" argument cannot be null");
-    }
-  }
 
   public boolean createIfMissing()
   {
@@ -297,7 +294,7 @@ public class Options {
 
   public Options compressionType(CompressionType compressionType)
   {
-    checkArgNotNull(compressionType, "compressionType");
+    Utils.checkArgNotNull(compressionType, "compressionType");
     this.compressionType = compressionType;
     return this;
   }
@@ -309,7 +306,7 @@ public class Options {
 
   public Options compactionStyle(CompactionStyle compactionStyle)
   {
-    checkArgNotNull(compactionStyle, "CompactionStyle");
+    Utils.checkArgNotNull(compactionStyle, "CompactionStyle");
     _compactionStyle = compactionStyle;
     return this;
   }
@@ -325,76 +322,91 @@ public class Options {
     return this;
   }
 
-  public NativeCache nativeCache() {
+  public NativeCache nativeCache()
+  {
     return nativeCache;
   }
 
-  public Options nativeCache(NativeCache nativeCache) {
+  public Options nativeCache(NativeCache nativeCache)
+  {
     this.nativeCache = nativeCache;
     return this;
   }
 
-  public FilterPolicy filterPolicy() {
+  public FilterPolicy filterPolicy()
+  {
     return filterPolicy;
   }
 
-  public Options filterPolicy(FilterPolicy filterPolicy) {
+  public Options filterPolicy(FilterPolicy filterPolicy)
+  {
     this.filterPolicy = filterPolicy;
     return this;
   }
 
-  public DBComparator comparator() {
+  public DBComparator comparator()
+  {
     return comparator;
   }
 
-  public Options comparator(DBComparator comparator) {
+  public Options comparator(DBComparator comparator)
+  {
     this.comparator = comparator;
     return this;
   }
 
-  public MergeOperator mergeOperator() {
+  public MergeOperator mergeOperator()
+  {
     return _mergeOperator;
   }
 
-  public Options mergeOperator(MergeOperator mergeOperator) {
+  public Options mergeOperator(MergeOperator mergeOperator)
+  {
     _mergeOperator = mergeOperator;
     return this;
   }
 
-  public CompactionFilter compactionFilter() {
+  public CompactionFilter compactionFilter()
+  {
     return compactionFilter;
   }
 
-  public Options compactionFilter(CompactionFilter compactionFilter) {
+  public Options compactionFilter(CompactionFilter compactionFilter)
+  {
     this.compactionFilter = compactionFilter;
     return this;
   }
 
-  public Logger logger() {
+  public DBLogger logger()
+  {
     return logger;
   }
 
-  public Options logger(Logger logger) {
+  public Options logger(DBLogger logger)
+  {
     this.logger = logger;
     return this;
   }
 
-  public boolean paranoidChecks() {
+  public boolean paranoidChecks()
+  {
     return paranoidChecks;
   }
 
-  public Options paranoidChecks(boolean paranoidChecks) {
+  public Options paranoidChecks(boolean paranoidChecks)
+  {
     this.paranoidChecks = paranoidChecks;
     return this;
   }
 
-  public long envPtr() {
+  public long envPtr()
+  {
     return envPtr;
   }
 
-  public Options envPtr(long ptr) {
+  public Options envPtr(long ptr)
+  {
     envPtr = ptr;
     return this;
   }
 }
-

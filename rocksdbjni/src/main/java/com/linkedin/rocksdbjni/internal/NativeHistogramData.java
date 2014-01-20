@@ -7,31 +7,37 @@ import org.fusesource.hawtjni.runtime.JniMethod;
 
 import static org.fusesource.hawtjni.runtime.ClassFlag.STRUCT;
 
-@JniClass(name="rocksdb::HistogramData", flags={STRUCT})
-public class NativeHistogramData {
+@JniClass(name = "rocksdb::HistogramData", flags = { STRUCT })
+public class NativeHistogramData
+{
   public double median;
   public double percentile95;
   public double percentile99;
   public double average;
   public double standard_deviation;
 
-  public double getMedian() {
+  public double getMedian()
+  {
     return median;
   }
 
-  public double getPercentile95() {
+  public double getPercentile95()
+  {
     return percentile95;
   }
 
-  public double getPercentile99() {
+  public double getPercentile99()
+  {
     return percentile99;
   }
 
-  public double getAverage() {
+  public double getAverage()
+  {
     return average;
   }
 
-  public double getStandardDeviation() {
+  public double getStandardDeviation()
+  {
     return standard_deviation;
   }
 }

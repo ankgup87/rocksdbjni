@@ -1,14 +1,15 @@
-package com.linkedin.rocksdbjni.internal;
-
+package com.linkedin.rocksdbjni;
 
 import java.io.File;
 import java.io.IOException;
 
+import com.linkedin.rocksdbjni.internal.Options;
 
 /**
  * @author Ankit Gupta
  */
-public interface DBFactory {
+public interface DBFactory
+{
 
   public DB open(File path, Options options) throws IOException;
 
@@ -17,4 +18,3 @@ public interface DBFactory {
   public void repair(File path, Options options) throws IOException;
 
 }
-

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.fusesource.rocksdbjni</groupId>
+    <artifactId>rocksdbjni-project</artifactId>
+    <version>0.1</version>
+  </parent>
+
+  <groupId>org.fusesource.rocksdbjni</groupId>
+  <artifactId>rocksdbjni-linux64</artifactId>
+  <version>0.1</version>
+  
+  <name>${project.artifactId}</name>
+  <description>The rocksdbjni linux 64 native libraries</description>
+      
+  <dependencies>
+    <dependency>
+      <groupId>org.fusesource.rocksdbjni</groupId>
+      <artifactId>rocksdbjni</artifactId>
+      <version>0.1</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <testSourceDirectory>${basedir}/../rocksdbjni/src/test/java</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.1</version>
+        <configuration>
+          <classesDirectory>${basedir}/target/generated-sources/hawtjni/lib</classesDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.fusesource.hawtjni</groupId>
+        <artifactId>maven-hawtjni-plugin</artifactId>
+        <version>${hawtjni-version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <name>rocksdbjni</name>
+          <classified>false</classified>
+          <nativeSrcDependency>
+            <groupId>org.fusesource.rocksdbjni</groupId>
+            <artifactId>rocksdbjni</artifactId>
+            <version>${project.version}</version>
+            <classifier>native-src</classifier>
+            <type>zip</type>
+          </nativeSrcDependency>
+	  <platform>osx</platform>
+          <configureArgs>
+            <arg>--with-rocksdb=${env.ROCKSDB_HOME}</arg>
+            <arg>--with-snappy=${env.SNAPPY_HOME}</arg>
+ 	    <arg>--with-universal</arg>
+          </configureArgs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

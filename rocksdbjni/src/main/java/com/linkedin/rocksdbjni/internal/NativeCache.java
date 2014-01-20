@@ -1,4 +1,3 @@
-
 package com.linkedin.rocksdbjni.internal;
 
 import org.fusesource.hawtjni.runtime.JniArg;
@@ -18,58 +17,61 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.*;
 
 /**
  * Provides a java interface to the C++ leveldb::Cache class.
- *
+ * 
  * @author Ankit Gupta
  */
-public class NativeCache extends NativeObject {
+public class NativeCache extends NativeObject
+{
 
-  @JniClass(name="JNILRUCache", flags={CPP, STRUCT})
-  private static class CacheJNI {
-    static {
+  @JniClass(name = "JNILRUCache", flags = { CPP, STRUCT })
+  private static class CacheJNI
+  {
+    static
+    {
       NativeDB.LIBRARY.load();
       init();
     }
 
-    @JniMethod(flags={CPP_NEW})
+    @JniMethod(flags = { CPP_NEW })
     public static final native long create();
-    @JniMethod(flags={CPP_DELETE})
+
+    @JniMethod(flags = { CPP_DELETE })
     public static final native void delete(long ptr);
 
-    public static final native void memmove (
-        @JniArg(cast="void *") long dest,
-        @JniArg(cast="const void *", flags={NO_OUT, CRITICAL}) CacheJNI src,
-        @JniArg(cast="size_t") long size);
+    public static final native void memmove(@JniArg(cast = "void *") long dest,
+                                            @JniArg(cast = "const void *", flags = { NO_OUT, CRITICAL }) CacheJNI src,
+                                            @JniArg(cast = "size_t") long size);
 
-    public static final native void memmove (
-        @JniArg(cast="void *", flags={NO_IN, CRITICAL}) CacheJNI dest,
-        @JniArg(cast="const void *") long src,
-        @JniArg(cast="size_t") long size);
+    public static final native void memmove(@JniArg(cast = "void *", flags = { NO_IN, CRITICAL }) CacheJNI dest,
+                                            @JniArg(cast = "const void *") long src,
+                                            @JniArg(cast = "size_t") long size);
 
-    @JniField(cast="rocksdb::Cache*", flags={SHARED_PTR})
+    @JniField(cast = "rocksdb::Cache*", flags = { SHARED_PTR })
     long lruCache;
 
-    @JniField(cast="jlong")
+    @JniField(cast = "jlong")
     long size;
 
-    @JniMethod(flags={CONSTANT_INITIALIZER})
+    @JniMethod(flags = { CONSTANT_INITIALIZER })
     private static final native void init();
 
-    @JniMethod(cast="rocksdb::Cache *", accessor="rocksdb::NewLRUCache", flags={SHARED_PTR_CAST})
-    public static final native long NewLRUCache(
-        @JniArg(cast="size_t") long capacity);
+    @JniMethod(cast = "rocksdb::Cache *", accessor = "rocksdb::NewLRUCache", flags = { SHARED_PTR_CAST })
+    public static final native long NewLRUCache(@JniArg(cast = "size_t") long capacity);
 
-    @JniField(flags={CONSTANT}, accessor="sizeof(struct JNILRUCache)")
+    @JniField(flags = { CONSTANT }, accessor = "sizeof(struct JNILRUCache)")
     static int SIZEOF;
   }
 
   private volatile long globalRef;
 
-  public NativeCache(long capacity, int numShardBits) {
+  public NativeCache(long capacity, int numShardBits)
+  {
     super(CacheJNI.create());
     try
     {
       globalRef = NativeDB.DBJNI.NewGlobalRef(this);
-      if( globalRef==0 ) {
+      if (globalRef == 0)
+      {
         throw new RuntimeException("jni call failed: NewGlobalRef");
       }
 
@@ -79,14 +81,17 @@ public class NativeCache extends NativeObject {
 
       CacheJNI.memmove(self, cacheJNI, CacheJNI.SIZEOF);
     }
-    catch (RuntimeException e) {
+    catch (RuntimeException e)
+    {
       delete();
       throw e;
     }
   }
 
-  public void delete() {
-    if( globalRef!=0 ) {
+  public void delete()
+  {
+    if (globalRef != 0)
+    {
       NativeDB.DBJNI.DeleteGlobalRef(globalRef);
       globalRef = 0;
     }

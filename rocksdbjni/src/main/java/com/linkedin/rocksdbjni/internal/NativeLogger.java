@@ -1,4 +1,3 @@
-
 package com.linkedin.rocksdbjni.internal;
 
 import org.fusesource.hawtjni.runtime.JniArg;
@@ -18,79 +17,88 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.*;
  * <p>
  * Provides a java interface to the C++ leveldb::Logger class.
  * </p>
- *
+ * 
  * @author Ankit Gupta
  */
-public abstract class NativeLogger extends NativeObject {
+public abstract class NativeLogger extends NativeObject
+{
 
-    @JniClass(name="JNILogger", flags={STRUCT, CPP})
-    static public class LoggerJNI {
+  @JniClass(name = "JNILogger", flags = { STRUCT, CPP })
+  static public class LoggerJNI
+  {
 
-        static {
-            NativeDB.LIBRARY.load();
-            init();
-        }
-
-        @JniMethod(flags={CPP_NEW})
-        public static final native long create();
-
-        @JniMethod(flags={CPP_DELETE})
-        public static final native void delete(
-                long self
-                );
-
-        public static final native void memmove (
-                @JniArg(cast="void *") long dest,
-                @JniArg(cast="const void *", flags={NO_OUT, CRITICAL}) LoggerJNI src,
-                @JniArg(cast="size_t") long size);
-
-        @JniField(cast="jobject", flags={POINTER_FIELD})
-        long target;
-
-        @JniField(cast="jmethodID", flags={POINTER_FIELD})
-        long log_method;
-
-        @JniMethod(flags={CONSTANT_INITIALIZER})
-        private static final native void init();
-
-        @JniField(flags={CONSTANT}, accessor="sizeof(struct JNILogger)")
-        static int SIZEOF;
+    static
+    {
+      NativeDB.LIBRARY.load();
+      init();
     }
 
-    private long globalRef;
+    @JniMethod(flags = { CPP_NEW })
+    public static final native long create();
 
-    public NativeLogger() {
-        super(LoggerJNI.create());
-        try {
-            globalRef = NativeDB.DBJNI.NewGlobalRef(this);
-            if( globalRef==0 ) {
-                throw new RuntimeException("jni call failed: NewGlobalRef");
-            }
-            LoggerJNI struct = new LoggerJNI();
-            struct.log_method = NativeDB.DBJNI.GetMethodID(this.getClass(), "log", "(Ljava/lang/String;)V");
-            if( struct.log_method ==0 ) {
-                throw new RuntimeException("jni call failed: GetMethodID");
-            }
-            struct.target = globalRef;
-            LoggerJNI.memmove(self, struct, LoggerJNI.SIZEOF);
+    @JniMethod(flags = { CPP_DELETE })
+    public static final native void delete(long self);
 
-        } catch (RuntimeException e) {
-            delete();
-            throw e;
-        }
+    public static final native void memmove(@JniArg(cast = "void *") long dest,
+                                            @JniArg(cast = "const void *", flags = { NO_OUT, CRITICAL }) LoggerJNI src,
+                                            @JniArg(cast = "size_t") long size);
+
+    @JniField(cast = "jobject", flags = { POINTER_FIELD })
+    long target;
+
+    @JniField(cast = "jmethodID", flags = { POINTER_FIELD })
+    long log_method;
+
+    @JniMethod(flags = { CONSTANT_INITIALIZER })
+    private static final native void init();
+
+    @JniField(flags = { CONSTANT }, accessor = "sizeof(struct JNILogger)")
+    static int SIZEOF;
+  }
+
+  private long globalRef;
+
+  public NativeLogger()
+  {
+    super(LoggerJNI.create());
+    try
+    {
+      globalRef = NativeDB.DBJNI.NewGlobalRef(this);
+      if (globalRef == 0)
+      {
+        throw new RuntimeException("jni call failed: NewGlobalRef");
+      }
+      LoggerJNI struct = new LoggerJNI();
+      struct.log_method = NativeDB.DBJNI.GetMethodID(this.getClass(), "log", "(Ljava/lang/String;)V");
+      if (struct.log_method == 0)
+      {
+        throw new RuntimeException("jni call failed: GetMethodID");
+      }
+      struct.target = globalRef;
+      LoggerJNI.memmove(self, struct, LoggerJNI.SIZEOF);
+
     }
-
-    NativeLogger(long ptr) {
-        super(ptr);
+    catch (RuntimeException e)
+    {
+      delete();
+      throw e;
     }
+  }
 
-    public void delete() {
-        if( globalRef!=0 ) {
-            NativeDB.DBJNI.DeleteGlobalRef(globalRef);
-            globalRef = 0;
-        }
+  NativeLogger(long ptr)
+  {
+    super(ptr);
+  }
+
+  public void delete()
+  {
+    if (globalRef != 0)
+    {
+      NativeDB.DBJNI.DeleteGlobalRef(globalRef);
+      globalRef = 0;
     }
+  }
 
-    public abstract void log(String message);
+  public abstract void log(String message);
 
 }

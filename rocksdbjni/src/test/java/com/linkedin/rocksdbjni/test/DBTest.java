@@ -1,36 +1,40 @@
-
 package com.linkedin.rocksdbjni.test;
 
-import com.linkedin.rocksdbjni.JniDBFactory;
+import com.linkedin.rocksdbjni.CompactionFilter;
+import com.linkedin.rocksdbjni.DB;
+import com.linkedin.rocksdbjni.DBComparator;
+import com.linkedin.rocksdbjni.DBException;
+import com.linkedin.rocksdbjni.DBFactory;
+import com.linkedin.rocksdbjni.DBIterator;
+import com.linkedin.rocksdbjni.FilterPolicy;
+import com.linkedin.rocksdbjni.DBLogger;
+import com.linkedin.rocksdbjni.Range;
+import com.linkedin.rocksdbjni.WriteBatch;
 import com.linkedin.rocksdbjni.internal.*;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import org.iq80.leveldb.DBComparator;
-import org.iq80.leveldb.DBException;
-import org.iq80.leveldb.DBIterator;
-import org.iq80.leveldb.Logger;
-import org.iq80.leveldb.Range;
-import org.iq80.leveldb.WriteBatch;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static com.linkedin.rocksdbjni.JniDBFactory.asString;
-import static com.linkedin.rocksdbjni.JniDBFactory.bytes;
-
+import static com.linkedin.rocksdbjni.internal.JniDBFactory.asString;
+import static com.linkedin.rocksdbjni.internal.JniDBFactory.bytes;
 
 /**
  * A Unit test for the DB class implementation.
- *
+ * 
  * @author Ankit Gupta
  */
-public class DBTest extends TestCase {
+public class DBTest extends TestCase
+{
 
   DBFactory factory = JniDBFactory.factory;
 
-  File getTestDirectory(String name) throws IOException {
+  File getTestDirectory(String name) throws IOException
+  {
     File rc = new File(new File("test-data"), name);
     factory.destroy(rc, new Options().createIfMissing(true));
     rc.mkdirs();
@@ -38,7 +42,8 @@ public class DBTest extends TestCase {
   }
 
   @Test
-  public void testOpen() throws IOException {
+  public void testOpen() throws IOException
+  {
 
     Options options = new Options().createIfMissing(true);
 
@@ -49,43 +54,51 @@ public class DBTest extends TestCase {
 
     // Try again.. this time we expect a failure since it exists.
     options = new Options().errorIfExists(true);
-    try {
+    try
+    {
       factory.open(path, options);
       fail("Expected exception.");
-    } catch (IOException e) {
+    }
+    catch (IOException e)
+    {
     }
 
   }
 
   @Test
-  public void testRepair() throws IOException, DBException {
+  public void testRepair() throws IOException,
+      DBException
+  {
     testCRUD();
     factory.repair(new File(new File("test-data"), getName()), new Options());
   }
 
   @Test
-  public void testCRUD() throws IOException, DBException
+  public void testCRUD() throws IOException,
+      DBException
   {
-    Options options = new Options().createIfMissing(true).nativeCache(new NativeCache(10 * 1024 * 1024, 6)).
-        filterPolicy(new FilterPolicy()
-        {
-          public int bitsPerKey()
-          {
-            return 10;
-          }
+    Options options =
+        new Options().createIfMissing(true)
+                     .nativeCache(new NativeCache(10 * 1024 * 1024, 6))
+                     .filterPolicy(new FilterPolicy()
+                     {
+                       public int bitsPerKey()
+                       {
+                         return 10;
+                       }
 
-          public String name()
-          {
-            return "test";
-          }
-        }).
-        logger(new Logger()
-        {
-          public void log(String s)
-          {
-            System.out.println(s);
-          }
-        });
+                       public String name()
+                       {
+                         return "test";
+                       }
+                     })
+                     .logger(new DBLogger()
+                     {
+                       public void log(String s)
+                       {
+                         System.out.println(s);
+                       }
+                     });
 
     File path = getTestDirectory(getName());
     factory.destroy(path, new Options());
@@ -94,8 +107,6 @@ public class DBTest extends TestCase {
 
     File path1 = getTestDirectory(getName() + "test");
     DB db1 = factory.open(path1, options);
-
-
 
     WriteOptions wo = new WriteOptions().sync(false);
     ReadOptions ro = new ReadOptions().fillCache(true).verifyChecksums(true);
@@ -119,7 +130,9 @@ public class DBTest extends TestCase {
   }
 
   @Test
-  public void testIterator() throws IOException, DBException {
+  public void testIterator() throws IOException,
+      DBException
+  {
 
     Options options = new Options().createIfMissing(true);
 
@@ -138,7 +151,8 @@ public class DBTest extends TestCase {
     ArrayList<String> actual = new ArrayList<String>();
 
     DBIterator iterator = db.iterator();
-    for (iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
+    for (iterator.seekToFirst(); iterator.hasNext(); iterator.next())
+    {
       actual.add(asString(iterator.peekNext().getKey()));
     }
     iterator.close();
@@ -147,10 +161,10 @@ public class DBTest extends TestCase {
     db.close();
   }
 
-
-
   @Test
-  public void testMerge() throws IOException, DBException {
+  public void testMerge() throws IOException,
+      DBException
+  {
 
     Options options = new Options().createIfMissing(true);
     options.mergeOperator(new MergeOperator()
@@ -159,12 +173,12 @@ public class DBTest extends TestCase {
       public byte[] fullMerge(byte[] key, byte[] existing_value, List<byte[]> operandList)
       {
         StringBuilder stringBuilder = new StringBuilder();
-        if(existing_value != null)
+        if (existing_value != null)
         {
           stringBuilder.append(asString(existing_value));
         }
 
-        for(byte[] operand : operandList)
+        for (byte[] operand : operandList)
         {
           stringBuilder.append(asString(operand));
         }
@@ -187,7 +201,7 @@ public class DBTest extends TestCase {
     });
 
     final List<String> messages = Collections.synchronizedList(new ArrayList<String>());
-    options.logger(new Logger()
+    options.logger(new DBLogger()
     {
       public void log(String message)
       {
@@ -214,7 +228,9 @@ public class DBTest extends TestCase {
   }
 
   @Test
-  public void testSnapshot() throws IOException, DBException {
+  public void testSnapshot() throws IOException,
+      DBException
+  {
 
     Options options = new Options().createIfMissing(true);
 
@@ -246,7 +262,10 @@ public class DBTest extends TestCase {
   }
 
   @Test
-  public void testCompactRanges() throws IOException, InterruptedException, DBException {
+  public void testCompactRanges() throws IOException,
+      InterruptedException,
+      DBException
+  {
     Options options = new Options().createIfMissing(true);
     options.compactionFilter(new CompactionFilter()
     {
@@ -263,16 +282,20 @@ public class DBTest extends TestCase {
 
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
-    if( db instanceof JniDB) {
+    if (db instanceof JniDB)
+    {
       Random r = new Random(0);
-      String data="";
-      for(int i=0; i < 1024; i++) {
-        data+= 'a'+r.nextInt(26);
+      String data = "";
+      for (int i = 0; i < 1024; i++)
+      {
+        data += 'a' + r.nextInt(26);
       }
-      for(int i=0; i < 5*1024; i++) {
-        db.put(bytes("row"+i), bytes(data));
+      for (int i = 0; i < 5 * 1024; i++)
+      {
+        db.put(bytes("row" + i), bytes(data));
       }
-      for(int i=0; i < 5*1024; i++) {
+      for (int i = 0; i < 5 * 1024; i++)
+      {
         db.delete(bytes("row" + i));
       }
 
@@ -284,7 +307,9 @@ public class DBTest extends TestCase {
   }
 
   @Test
-  public void testWriteBatch() throws IOException, DBException {
+  public void testWriteBatch() throws IOException,
+      DBException
+  {
 
     Options options = new Options().createIfMissing(true);
 
@@ -309,7 +334,8 @@ public class DBTest extends TestCase {
     ArrayList<String> actual = new ArrayList<String>();
 
     DBIterator iterator = db.iterator();
-    for (iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
+    for (iterator.seekToFirst(); iterator.hasNext(); iterator.next())
+    {
       actual.add(asString(iterator.peekNext().getKey()));
     }
     iterator.close();
@@ -319,19 +345,23 @@ public class DBTest extends TestCase {
   }
 
   @Test
-  public void testApproximateSizes() throws IOException, DBException {
+  public void testApproximateSizes() throws IOException,
+      DBException
+  {
     Options options = new Options().createIfMissing(true);
 
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
 
     Random r = new Random(0);
-    String data="";
-    for(int i=0; i < 1024; i++) {
-      data+= 'a'+r.nextInt(26);
+    String data = "";
+    for (int i = 0; i < 1024; i++)
+    {
+      data += 'a' + r.nextInt(26);
     }
-    for(int i=0; i < 5*1024; i++) {
-      db.put(bytes("row"+i), bytes(data));
+    for (int i = 0; i < 5 * 1024; i++)
+    {
+      db.put(bytes("row" + i), bytes(data));
     }
 
     long[] approximateSizes = db.getApproximateSizes(new Range(bytes("row"), bytes("s")));
@@ -342,25 +372,31 @@ public class DBTest extends TestCase {
     db.close();
   }
 
-
   @Test
-  public void testCustomComparator1() throws IOException, DBException {
+  public void testCustomComparator1() throws IOException,
+      DBException
+  {
     Options options = new Options().createIfMissing(true);
-    options.comparator(new DBComparator() {
+    options.comparator(new DBComparator()
+    {
 
-      public int compare(byte[] key1, byte[] key2) {
+      public int compare(byte[] key1, byte[] key2)
+      {
         return new String(key1).compareTo(new String(key2));
       }
 
-      public String name() {
+      public String name()
+      {
         return getName();
       }
 
-      public byte[] findShortestSeparator(byte[] start, byte[] limit) {
+      public byte[] findShortestSeparator(byte[] start, byte[] limit)
+      {
         return start;
       }
 
-      public byte[] findShortSuccessor(byte[] key) {
+      public byte[] findShortSuccessor(byte[] key)
+      {
         return key;
       }
     });
@@ -369,8 +405,9 @@ public class DBTest extends TestCase {
     DB db = factory.open(path, options);
 
     ArrayList<String> expecting = new ArrayList<String>();
-    for(int i=0; i < 26; i++) {
-      String t = ""+ ((char) ('a' + i));
+    for (int i = 0; i < 26; i++)
+    {
+      String t = "" + ((char) ('a' + i));
       expecting.add(t);
       db.put(bytes(t), bytes(t));
     }
@@ -378,34 +415,41 @@ public class DBTest extends TestCase {
     ArrayList<String> actual = new ArrayList<String>();
 
     DBIterator iterator = db.iterator();
-    for (iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
+    for (iterator.seekToFirst(); iterator.hasNext(); iterator.next())
+    {
       actual.add(asString(iterator.peekNext().getKey()));
     }
     iterator.close();
     assertEquals(expecting, actual);
 
-
     db.close();
   }
 
   @Test
-  public void testCustomComparator2() throws IOException, DBException {
+  public void testCustomComparator2() throws IOException,
+      DBException
+  {
     Options options = new Options().createIfMissing(true);
-    options.comparator(new DBComparator() {
+    options.comparator(new DBComparator()
+    {
 
-      public int compare(byte[] key1, byte[] key2) {
+      public int compare(byte[] key1, byte[] key2)
+      {
         return new String(key1).compareTo(new String(key2)) * -1;
       }
 
-      public String name() {
+      public String name()
+      {
         return getName();
       }
 
-      public byte[] findShortestSeparator(byte[] start, byte[] limit) {
+      public byte[] findShortestSeparator(byte[] start, byte[] limit)
+      {
         return start;
       }
 
-      public byte[] findShortSuccessor(byte[] key) {
+      public byte[] findShortSuccessor(byte[] key)
+      {
         return key;
       }
     });
@@ -414,8 +458,9 @@ public class DBTest extends TestCase {
     DB db = factory.open(path, options);
 
     ArrayList<String> expecting = new ArrayList<String>();
-    for(int i=0; i < 26; i++) {
-      String t = ""+ ((char) ('a' + i));
+    for (int i = 0; i < 26; i++)
+    {
+      String t = "" + ((char) ('a' + i));
       expecting.add(t);
       db.put(bytes(t), bytes(t));
     }
@@ -423,7 +468,8 @@ public class DBTest extends TestCase {
 
     ArrayList<String> actual = new ArrayList<String>();
     DBIterator iterator = db.iterator();
-    for (iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
+    for (iterator.seekToFirst(); iterator.hasNext(); iterator.next())
+    {
       actual.add(asString(iterator.peekNext().getKey()));
     }
     iterator.close();
@@ -433,7 +479,8 @@ public class DBTest extends TestCase {
   }
 
   @Test
-  public void testSuspendAndResumeCompactions() throws Exception {
+  public void testSuspendAndResumeCompactions() throws Exception
+  {
     Options options = new Options().createIfMissing(true);
     File path = getTestDirectory(getName());
     DB db = factory.open(path, options);
@@ -442,12 +489,15 @@ public class DBTest extends TestCase {
     db.close();
   }
 
-  public void assertEquals(byte[] arg1, byte[] arg2) {
+  public void assertEquals(byte[] arg1, byte[] arg2)
+  {
     assertTrue(Arrays.equals(arg1, arg2));
   }
 
   @Test
-  public void testStatistics() throws IOException, DBException {
+  public void testStatistics() throws IOException,
+      DBException
+  {
 
     Options options = new Options().createIfMissing(true);
 
@@ -473,7 +523,8 @@ public class DBTest extends TestCase {
   }
 
   @Test
-  public void testEnvSharingBetweenDBs() throws IOException {
+  public void testEnvSharingBetweenDBs() throws IOException
+  {
     Options options1 = new Options().createIfMissing(true);
 
     File path1 = getTestDirectory(getName());
@@ -500,51 +551,37 @@ public class DBTest extends TestCase {
 
     assertTrue(NativeStatistics.getTickerCount(db2.statisticsPtr(), 16) == 3);
 
-    // Even though the env ptr is shared between the dbs, there should not be a SIGSEV while closing the dbs.
+    // Even though the env ptr is shared between the dbs, there should not be a SIGSEV while closing
+    // the dbs.
     db1.close();
     db2.close();
-    //Intellij shows that background threads are created only once, hurray!
+    // Intellij shows that background threads are created only once, hurray!
   }
 
+  // TODO: Fix this when DB deletion is fixed
+  /*
+   * @Test public void testIssue26() throws IOException {
+   * 
+   * JniDBFactory.pushMemoryPool(1024 * 512); try { Options options = new Options();
+   * options.createIfMissing(true);
+   * 
+   * DB db = factory.open(getTestDirectory(getName()), options);
+   * 
+   * for (int i = 0; i < 1024 * 1024; i++) { byte[] key = ByteBuffer.allocate(4).putInt(i).array();
+   * byte[] value = ByteBuffer.allocate(4).putInt(-i).array(); db.put(key, value);
+   * assertTrue(Arrays.equals(db.get(key), value)); } //db.close(); } finally {
+   * JniDBFactory.popMemoryPool(); }
+   * 
+   * }
+   */
 
-  //TODO: Fix this when DB deletion is fixed
-  /*@Test
-  public void testIssue26() throws IOException {
-
-    JniDBFactory.pushMemoryPool(1024 * 512);
-    try {
-      Options options = new Options();
-      options.createIfMissing(true);
-
-      DB db = factory.open(getTestDirectory(getName()), options);
-
-      for (int i = 0; i < 1024 * 1024; i++) {
-        byte[] key = ByteBuffer.allocate(4).putInt(i).array();
-        byte[] value = ByteBuffer.allocate(4).putInt(-i).array();
-        db.put(key, value);
-        assertTrue(Arrays.equals(db.get(key), value));
-      }
-      //db.close();
-    } finally {
-      JniDBFactory.popMemoryPool();
-    }
-
-  }*/
-
-
-  /*@Test
-  public void testIssue27() throws IOException {
-
-    Options options = new Options();
-    options.createIfMissing(true);
-    DB db = factory.open(getTestDirectory(getName()), options);
-    db.close();
-
-    try {
-      db.iterator();
-      fail("Expected a DBException");
-    } catch(DBException e) {
-    }
-  }*/
+  /*
+   * @Test public void testIssue27() throws IOException {
+   * 
+   * Options options = new Options(); options.createIfMissing(true); DB db =
+   * factory.open(getTestDirectory(getName()), options); db.close();
+   * 
+   * try { db.iterator(); fail("Expected a DBException"); } catch(DBException e) { } }
+   */
 
 }

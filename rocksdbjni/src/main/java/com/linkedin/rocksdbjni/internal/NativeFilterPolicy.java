@@ -1,6 +1,5 @@
 package com.linkedin.rocksdbjni.internal;
 
-
 import org.fusesource.hawtjni.runtime.JniArg;
 import org.fusesource.hawtjni.runtime.JniClass;
 import org.fusesource.hawtjni.runtime.JniField;
@@ -17,52 +16,50 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.CONSTANT_INITIALIZER;
 import static org.fusesource.hawtjni.runtime.MethodFlag.CPP_DELETE;
 import static org.fusesource.hawtjni.runtime.MethodFlag.CPP_NEW;
 
-
 /**
  * @author Ankit Gupta
  */
 public abstract class NativeFilterPolicy extends NativeObject
 {
-  @JniClass(name="JNIBloomFilter", flags={CPP, STRUCT})
+  @JniClass(name = "JNIBloomFilter", flags = { CPP, STRUCT })
   private static class FilterJNI
   {
-    static {
+    static
+    {
       NativeDB.LIBRARY.load();
       init();
     }
 
-    @JniMethod(flags={CPP_NEW})
+    @JniMethod(flags = { CPP_NEW })
     public static final native long create();
-    @JniMethod(flags={CPP_DELETE})
+
+    @JniMethod(flags = { CPP_DELETE })
     public static final native void delete(long ptr);
 
-    public static final native void memmove (
-        @JniArg(cast="void *") long dest,
-        @JniArg(cast="const void *", flags={NO_OUT, CRITICAL}) FilterJNI src,
-        @JniArg(cast="size_t") long size);
+    public static final native void memmove(@JniArg(cast = "void *") long dest,
+                                            @JniArg(cast = "const void *", flags = { NO_OUT, CRITICAL }) FilterJNI src,
+                                            @JniArg(cast = "size_t") long size);
 
-    public static final native void memmove (
-        @JniArg(cast="void *", flags={NO_IN, CRITICAL}) FilterJNI dest,
-        @JniArg(cast="const void *") long src,
-        @JniArg(cast="size_t") long size);
+    public static final native void memmove(@JniArg(cast = "void *", flags = { NO_IN, CRITICAL }) FilterJNI dest,
+                                            @JniArg(cast = "const void *") long src,
+                                            @JniArg(cast = "size_t") long size);
 
-    @JniField(cast="rocksdb::FilterPolicy*", flags={POINTER_FIELD})
+    @JniField(cast = "rocksdb::FilterPolicy*", flags = { POINTER_FIELD })
     long filterPolicy;
 
-    @JniField(cast="jint", flags={POINTER_FIELD})
+    @JniField(cast = "jint", flags = { POINTER_FIELD })
     int bits_per_key;
 
-    @JniMethod(flags={CONSTANT_INITIALIZER})
+    @JniMethod(flags = { CONSTANT_INITIALIZER })
     private static final native void init();
 
-    @JniMethod(cast="rocksdb::FilterPolicy *", accessor="rocksdb::NewBloomFilterPolicy")
-    public static final native long NewBloomFilterPolicy(
-        @JniArg int bits_per_key);
+    @JniMethod(cast = "rocksdb::FilterPolicy *", accessor = "rocksdb::NewBloomFilterPolicy")
+    public static final native long NewBloomFilterPolicy(@JniArg int bits_per_key);
 
-    @JniField(flags={CONSTANT}, accessor="sizeof(struct JNIBloomFilter)")
+    @JniField(flags = { CONSTANT }, accessor = "sizeof(struct JNIBloomFilter)")
     static int SIZEOF;
 
-    @JniField(cast="const char *")
+    @JniField(cast = "const char *")
     long name;
   }
 
@@ -76,7 +73,8 @@ public abstract class NativeFilterPolicy extends NativeObject
     {
       name_buffer = NativeBuffer.create(name());
       globalRef = NativeDB.DBJNI.NewGlobalRef(this);
-      if( globalRef==0 ) {
+      if (globalRef == 0)
+      {
         throw new RuntimeException("jni call failed: NewGlobalRef");
       }
 
@@ -87,14 +85,17 @@ public abstract class NativeFilterPolicy extends NativeObject
 
       FilterJNI.memmove(self, filterJNI, FilterJNI.SIZEOF);
     }
-    catch (RuntimeException e) {
+    catch (RuntimeException e)
+    {
       delete();
       throw e;
     }
   }
 
-  public void delete() {
-    if( globalRef!=0 ) {
+  public void delete()
+  {
+    if (globalRef != 0)
+    {
       NativeDB.DBJNI.DeleteGlobalRef(globalRef);
       globalRef = 0;
     }

@@ -56,6 +56,8 @@
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
+          <fork>true</fork>
+          <maxmem>4024m</maxmem>
         </configuration>
       </plugin>
 
@@ -163,6 +165,7 @@
       <id>full</id>
       <modules>
         <module>rocksdbjni-linux64</module>
+        <module>rocksdbjni-osx</module>
         <module>rocksdbjni-all</module>
       </modules>
     </profile>
@@ -171,6 +174,13 @@
       <id>linux64</id>
       <modules>
         <module>rocksdbjni-linux64</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>osx</id>
+      <modules>
+        <module>rocksdbjni-osx</module>
       </modules>
     </profile>
 

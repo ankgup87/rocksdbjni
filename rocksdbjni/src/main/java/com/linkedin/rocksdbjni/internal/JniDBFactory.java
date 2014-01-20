@@ -1,74 +1,95 @@
-
-package com.linkedin.rocksdbjni;
+package com.linkedin.rocksdbjni.internal;
 
 import java.util.List;
-import com.linkedin.rocksdbjni.internal.*;
-import com.linkedin.rocksdbjni.internal.DB;
-import com.linkedin.rocksdbjni.internal.DBFactory;
-import com.linkedin.rocksdbjni.internal.Options;
-import org.iq80.leveldb.*;
 
 import java.io.*;
 
-
+import com.linkedin.rocksdbjni.CompactionFilter;
+import com.linkedin.rocksdbjni.DB;
+import com.linkedin.rocksdbjni.DBComparator;
+import com.linkedin.rocksdbjni.DBFactory;
+import com.linkedin.rocksdbjni.FilterPolicy;
+import com.linkedin.rocksdbjni.DBLogger;
 
 public class JniDBFactory implements DBFactory
 {
   public static final JniDBFactory factory = new JniDBFactory();
-  static {
+  static
+  {
     NativeDB.LIBRARY.load();
   }
 
   public static final String VERSION;
-  static {
-    String v="unknown";
+  static
+  {
+    String v = "unknown";
     InputStream is = JniDBFactory.class.getResourceAsStream("version.txt");
-    try {
+    try
+    {
       v = new BufferedReader(new InputStreamReader(is, "UTF-8")).readLine();
-    } catch (Throwable e) {
-    } finally {
-      try {
+    }
+    catch (Throwable e)
+    {
+    }
+    finally
+    {
+      try
+      {
         is.close();
-      } catch (Throwable e) {
+      }
+      catch (Throwable e)
+      {
       }
     }
     VERSION = v;
   }
 
-  public static byte[] bytes(String value) {
-    if( value == null) {
+  public static byte[] bytes(String value)
+  {
+    if (value == null)
+    {
       return null;
     }
-    try {
+    try
+    {
       return value.getBytes("UTF-8");
-    } catch (UnsupportedEncodingException e) {
+    }
+    catch (UnsupportedEncodingException e)
+    {
       throw new RuntimeException(e);
     }
   }
 
-  public static String asString(byte value[]) {
-    if( value == null) {
+  public static String asString(byte value[])
+  {
+    if (value == null)
+    {
       return null;
     }
-    try {
+    try
+    {
       return new String(value, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
+    }
+    catch (UnsupportedEncodingException e)
+    {
       throw new RuntimeException(e);
     }
   }
 
-  static private class OptionsResourceHolder {
+  static private class OptionsResourceHolder
+  {
 
     NativeCache cache = null;
-    NativeComparator comparator=null;
-    NativeLogger logger=null;
+    NativeComparator comparator = null;
+    NativeLogger logger = null;
     NativeOptions options;
     NativeMergeOperator nativeMergeOperator = null;
     NativeCompactionFilter nativeCompactionFilter = null;
     NativeFilterPolicy nativeFilterPolicy = null;
     long envPtr = 0;
 
-    public void init(Options value) {
+    public void init(Options value)
+    {
 
       options = new NativeOptions();
       options.blockRestartInterval(value.blockRestartInterval());
@@ -96,7 +117,8 @@ public class JniDBFactory implements DBFactory
       options.maxWriteBufferNumber(value.maxWriteBufferNumber());
       options.envPtr(value.envPtr());
 
-      switch(value.compressionType()) {
+      switch (value.compressionType())
+      {
         case NONE:
           options.compression(NativeCompressionType.kNoCompression);
           break;
@@ -115,9 +137,9 @@ public class JniDBFactory implements DBFactory
           break;
       }
 
-      if(value.nativeCache() != null)
+      if (value.nativeCache() != null)
       {
-        if(!value.nativeCache().isAllocated())
+        if (!value.nativeCache().isAllocated())
         {
           throw new RuntimeException("Cache is not allocated");
         }
@@ -125,9 +147,8 @@ public class JniDBFactory implements DBFactory
         options.cache(value.nativeCache());
       }
 
-
       final FilterPolicy filterPolicy = value.filterPolicy();
-      if(filterPolicy != null)
+      if (filterPolicy != null)
       {
         nativeFilterPolicy = new NativeFilterPolicy(filterPolicy.bitsPerKey())
         {
@@ -141,26 +162,33 @@ public class JniDBFactory implements DBFactory
       }
 
       final DBComparator userComparator = value.comparator();
-      if(userComparator!=null) {
-        comparator = new NativeComparator() {
+      if (userComparator != null)
+      {
+        comparator = new NativeComparator()
+        {
           @Override
-          public int compare(byte[] key1, byte[] key2) {
+          public int compare(byte[] key1, byte[] key2)
+          {
             return userComparator.compare(key1, key2);
           }
 
           @Override
-          public String name() {
+          public String name()
+          {
             return userComparator.name();
           }
         };
         options.comparator(comparator);
       }
 
-      final Logger userLogger = value.logger();
-      if(userLogger!=null) {
-        logger = new NativeLogger() {
+      final DBLogger userLogger = value.logger();
+      if (userLogger != null)
+      {
+        logger = new NativeLogger()
+        {
           @Override
-          public void log(String message) {
+          public void log(String message)
+          {
             userLogger.log(message);
           }
         };
@@ -168,7 +196,7 @@ public class JniDBFactory implements DBFactory
       }
 
       final MergeOperator mergeOperator = value.mergeOperator();
-      if(mergeOperator != null)
+      if (mergeOperator != null)
       {
         nativeMergeOperator = new NativeMergeOperator()
         {
@@ -195,7 +223,7 @@ public class JniDBFactory implements DBFactory
       }
 
       final CompactionFilter compactionFilter = value.compactionFilter();
-      if(compactionFilter != null)
+      if (compactionFilter != null)
       {
         nativeCompactionFilter = new NativeCompactionFilter()
         {
@@ -215,66 +243,91 @@ public class JniDBFactory implements DBFactory
         options.compactionFilter(nativeCompactionFilter);
       }
     }
-    public void close() {
-      if(cache!=null) {
+
+    public void close()
+    {
+      if (cache != null)
+      {
         cache.delete();
       }
-      if(comparator!=null){
+      if (comparator != null)
+      {
         comparator.delete();
       }
-      if(logger!=null) {
+      if (logger != null)
+      {
         logger.delete();
       }
     }
   }
 
-  public DB open(File path, Options options) throws IOException {
-    NativeDB db=null;
+  public DB open(File path, Options options) throws IOException
+  {
+    NativeDB db = null;
     OptionsResourceHolder holder = new OptionsResourceHolder();
-    try {
+    try
+    {
       holder.init(options);
       db = NativeDB.open(holder.options, path);
-    } finally {
+    }
+    finally
+    {
       // if we could not open up the DB, then clean up the
       // other allocated native resouces..
-      if(db==null) {
+      if (db == null)
+      {
         holder.close();
       }
     }
-    return (DB) new JniDB(db, holder.cache, holder.comparator, holder.logger, holder.options.statisticsPtr(), holder.options.envPtr());
+    return (DB) new JniDB(db,
+                          holder.cache,
+                          holder.comparator,
+                          holder.logger,
+                          holder.options.statisticsPtr(),
+                          holder.options.envPtr());
   }
 
-  public void destroy(File path, Options options) throws IOException {
+  public void destroy(File path, Options options) throws IOException
+  {
     OptionsResourceHolder holder = new OptionsResourceHolder();
-    try {
+    try
+    {
       holder.init(options);
       NativeDB.destroy(path, holder.options);
-    } finally {
+    }
+    finally
+    {
       holder.close();
     }
   }
 
-  public void repair(File path, Options options) throws IOException {
+  public void repair(File path, Options options) throws IOException
+  {
     OptionsResourceHolder holder = new OptionsResourceHolder();
-    try {
+    try
+    {
       holder.init(options);
       NativeDB.repair(path, holder.options);
-    } finally {
+    }
+    finally
+    {
       holder.close();
     }
   }
 
   @Override
-  public String toString() {
+  public String toString()
+  {
     return String.format("com.linkedin version %s", VERSION);
   }
 
-
-  public static void pushMemoryPool(int size) {
+  public static void pushMemoryPool(int size)
+  {
     NativeBuffer.pushMemoryPool(size);
   }
 
-  public static void popMemoryPool() {
+  public static void popMemoryPool()
+  {
     NativeBuffer.popMemoryPool();
   }
 }

@@ -15,10 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.linkedin.rocksdbjni.internal;
+package com.linkedin.rocksdbjni;
 
 import java.io.Closeable;
 
-public interface Snapshot extends Closeable {
+public interface Snapshot extends Closeable
+{
 
 }

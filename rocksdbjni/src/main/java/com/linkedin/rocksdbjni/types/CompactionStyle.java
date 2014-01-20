@@ -1,17 +1,18 @@
-package com.linkedin.rocksdbjni.internal;
-
+package com.linkedin.rocksdbjni.types;
 
 /**
  * @author: aigupta
  */
 public enum CompactionStyle
 {
-  LEVEL(0x00),
-  UNIVERSAL(0x01);
+  LEVEL(0x00), UNIVERSAL(0x01);
 
-  public static CompactionStyle getCompressionTypeByPersistentId(int persistentId) {
-    for (CompactionStyle compactionStyle : CompactionStyle.values()) {
-      if (compactionStyle.persistentId == persistentId) {
+  public static CompactionStyle getCompressionTypeByPersistentId(int persistentId)
+  {
+    for (CompactionStyle compactionStyle : CompactionStyle.values())
+    {
+      if (compactionStyle.persistentId == persistentId)
+      {
         return compactionStyle;
       }
     }

@@ -1,5 +1,4 @@
-package com.linkedin.rocksdbjni.internal;
-
+package com.linkedin.rocksdbjni;
 
 /**
  * @author: Ankit Gupta
@@ -7,5 +6,6 @@ package com.linkedin.rocksdbjni.internal;
 public interface CompactionFilter
 {
   public boolean filter(byte[] key, byte[] existingValue);
+
   public String name();
 }
