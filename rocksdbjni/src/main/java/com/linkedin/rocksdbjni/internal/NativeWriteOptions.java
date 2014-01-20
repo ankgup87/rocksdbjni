@@ -1,4 +1,3 @@
-
 package com.linkedin.rocksdbjni.internal;
 
 import org.fusesource.hawtjni.runtime.JniClass;
@@ -9,11 +8,12 @@ import static org.fusesource.hawtjni.runtime.ClassFlag.STRUCT;
 
 /**
  * Provides a java interface to the C++ leveldb::WriteOptions class.
- *
+ * 
  * @author Ankit Gupta
  */
-@JniClass(name="rocksdb::WriteOptions", flags={STRUCT, CPP})
-public class NativeWriteOptions {
+@JniClass(name = "rocksdb::WriteOptions", flags = { STRUCT, CPP })
+public class NativeWriteOptions
+{
 
   @JniField
   boolean sync;
@@ -21,11 +21,13 @@ public class NativeWriteOptions {
   @JniField
   boolean disableWAL;
 
-  public boolean sync() {
+  public boolean sync()
+  {
     return sync;
   }
 
-  public boolean disableWAL() {
+  public boolean disableWAL()
+  {
     return disableWAL;
   }
 

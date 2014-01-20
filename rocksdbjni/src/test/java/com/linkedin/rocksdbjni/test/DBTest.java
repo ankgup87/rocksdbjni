@@ -8,6 +8,7 @@ import com.linkedin.rocksdbjni.DBFactory;
 import com.linkedin.rocksdbjni.DBIterator;
 import com.linkedin.rocksdbjni.FilterPolicy;
 import com.linkedin.rocksdbjni.DBLogger;
+import com.linkedin.rocksdbjni.MergeOperator;
 import com.linkedin.rocksdbjni.Range;
 import com.linkedin.rocksdbjni.WriteBatch;
 import com.linkedin.rocksdbjni.internal.*;

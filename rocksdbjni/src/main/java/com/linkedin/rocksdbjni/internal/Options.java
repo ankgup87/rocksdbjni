@@ -25,6 +25,7 @@ import com.linkedin.rocksdbjni.CompactionFilter;
 import com.linkedin.rocksdbjni.DBComparator;
 import com.linkedin.rocksdbjni.FilterPolicy;
 import com.linkedin.rocksdbjni.DBLogger;
+import com.linkedin.rocksdbjni.MergeOperator;
 import com.linkedin.rocksdbjni.Utils;
 import com.linkedin.rocksdbjni.types.CompactionStyle;
 import com.linkedin.rocksdbjni.types.CompressionType;

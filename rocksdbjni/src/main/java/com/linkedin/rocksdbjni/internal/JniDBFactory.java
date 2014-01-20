@@ -10,6 +10,7 @@ import com.linkedin.rocksdbjni.DBComparator;
 import com.linkedin.rocksdbjni.DBFactory;
 import com.linkedin.rocksdbjni.FilterPolicy;
 import com.linkedin.rocksdbjni.DBLogger;
+import com.linkedin.rocksdbjni.MergeOperator;
 
 public class JniDBFactory implements DBFactory
 {

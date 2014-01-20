@@ -17,72 +17,75 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.CONSTANT_INITIALIZER;
 import static org.fusesource.hawtjni.runtime.MethodFlag.CPP_DELETE;
 import static org.fusesource.hawtjni.runtime.MethodFlag.CPP_NEW;
 
-
 /**
  * @author Ankit Gupta
  */
 public abstract class NativeMergeOperator extends NativeObject
 {
-  @JniClass(name="JNIMergeOperator", flags={STRUCT, CPP})
-  static public class MergeOperatorJNI {
+  @JniClass(name = "JNIMergeOperator", flags = { STRUCT, CPP })
+  static public class MergeOperatorJNI
+  {
 
-    static {
+    static
+    {
       NativeDB.LIBRARY.load();
       init();
     }
 
-    @JniMethod(flags={CPP_NEW})
+    @JniMethod(flags = { CPP_NEW })
     public static final native long create();
 
-    @JniMethod(flags={CPP_DELETE})
-    public static final native void delete(
-        long self
-    );
+    @JniMethod(flags = { CPP_DELETE })
+    public static final native void delete(long self);
 
-    public static final native void memmove (
-        @JniArg(cast="void *") long dest,
-        @JniArg(cast="const void *", flags={NO_OUT, CRITICAL}) MergeOperatorJNI src,
-        @JniArg(cast="size_t") long size);
+    public static final native void memmove(@JniArg(cast = "void *") long dest,
+                                            @JniArg(cast = "const void *", flags = { NO_OUT, CRITICAL }) MergeOperatorJNI src,
+                                            @JniArg(cast = "size_t") long size);
 
-    @JniField(cast="jobject", flags={POINTER_FIELD})
+    @JniField(cast = "jobject", flags = { POINTER_FIELD })
     long target;
 
-    @JniField(cast="jmethodID", flags={POINTER_FIELD})
+    @JniField(cast = "jmethodID", flags = { POINTER_FIELD })
     long partial_merge_method;
 
-    @JniField(cast="jmethodID", flags={POINTER_FIELD})
+    @JniField(cast = "jmethodID", flags = { POINTER_FIELD })
     long full_merge_method;
 
-    @JniField(cast="const char *")
+    @JniField(cast = "const char *")
     long name;
 
-    @JniMethod(flags={CONSTANT_INITIALIZER})
+    @JniMethod(flags = { CONSTANT_INITIALIZER })
     private static final native void init();
 
-    @JniField(flags={CONSTANT}, accessor="sizeof(struct JNIMergeOperator)")
+    @JniField(flags = { CONSTANT }, accessor = "sizeof(struct JNIMergeOperator)")
     static int SIZEOF;
   }
 
   private NativeBuffer name_buffer;
   private long globalRef;
 
-  public NativeMergeOperator() {
+  public NativeMergeOperator()
+  {
     super(MergeOperatorJNI.create());
-    try {
+    try
+    {
       name_buffer = NativeBuffer.create(name());
       globalRef = NativeDB.DBJNI.NewGlobalRef(this);
-      if( globalRef==0 ) {
+      if (globalRef == 0)
+      {
         throw new RuntimeException("jni call failed: NewGlobalRef");
       }
       MergeOperatorJNI struct = new MergeOperatorJNI();
 
       struct.partial_merge_method = NativeDB.DBJNI.GetMethodID(this.getClass(), "partial_merge", "(JJJ)[B");
-      if( struct.partial_merge_method==0 ) {
+      if (struct.partial_merge_method == 0)
+      {
         throw new RuntimeException("jni call failed: GetMethodID");
       }
 
-        struct.full_merge_method = NativeDB.DBJNI.GetMethodID(this.getClass(), "full_merge", "(JJ[J)[B");
-      if( struct.full_merge_method==0 ) {
+      struct.full_merge_method = NativeDB.DBJNI.GetMethodID(this.getClass(), "full_merge", "(JJ[J)[B");
+      if (struct.full_merge_method == 0)
+      {
         throw new RuntimeException("jni call failed: GetMethodID");
       }
 
@@ -90,28 +93,35 @@ public abstract class NativeMergeOperator extends NativeObject
       struct.name = name_buffer.pointer();
       MergeOperatorJNI.memmove(self, struct, MergeOperatorJNI.SIZEOF);
 
-    } catch (RuntimeException e) {
+    }
+    catch (RuntimeException e)
+    {
       delete();
       throw e;
     }
   }
 
-  NativeMergeOperator(long ptr) {
+  NativeMergeOperator(long ptr)
+  {
     super(ptr);
   }
 
-  public void delete() {
-    if( name_buffer!=null ) {
+  public void delete()
+  {
+    if (name_buffer != null)
+    {
       name_buffer.delete();
       name_buffer = null;
     }
-    if( globalRef!=0 ) {
+    if (globalRef != 0)
+    {
       NativeDB.DBJNI.DeleteGlobalRef(globalRef);
       globalRef = 0;
     }
   }
 
-  private byte[] partial_merge(long ptr1, long ptr2, long ptr3) {
+  private byte[] partial_merge(long ptr1, long ptr2, long ptr3)
+  {
     NativeSlice s1 = new NativeSlice();
     s1.read(ptr1, 0);
 
@@ -124,20 +134,21 @@ public abstract class NativeMergeOperator extends NativeObject
     return partialMerge(s1.toByteArray(), s2.toByteArray(), s3.toByteArray());
   }
 
-  private byte[] full_merge(long ptr1, long ptr2, long[] ptr3) {
+  private byte[] full_merge(long ptr1, long ptr2, long[] ptr3)
+  {
     NativeSlice s1 = new NativeSlice();
     s1.read(ptr1, 0);
 
     NativeSlice s2 = null;
 
-    if(ptr2 != 0)
+    if (ptr2 != 0)
     {
       s2 = new NativeSlice();
       s2.read(ptr2, 0);
     }
 
     List<byte[]> list = new ArrayList<byte[]>();
-    for(long ptr : ptr3)
+    for (long ptr : ptr3)
     {
       NativeSlice s3 = new NativeSlice();
       s3.read(ptr, 0);
@@ -149,12 +160,7 @@ public abstract class NativeMergeOperator extends NativeObject
 
   public abstract String name();
 
-  public abstract byte[] fullMerge(byte[] key,
-                                   byte[] existing_value,
-                                   List<byte[]> operandList);
+  public abstract byte[] fullMerge(byte[] key, byte[] existing_value, List<byte[]> operandList);
 
-  public abstract byte[] partialMerge(byte[] key,
-                                      byte[] left_operand,
-                                      byte[] right_operand);
+  public abstract byte[] partialMerge(byte[] key, byte[] left_operand, byte[] right_operand);
 }
-

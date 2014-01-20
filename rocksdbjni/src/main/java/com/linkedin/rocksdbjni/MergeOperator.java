@@ -1,4 +1,4 @@
-package com.linkedin.rocksdbjni.internal;
+package com.linkedin.rocksdbjni;
 
 import java.util.List;
 
