@@ -183,7 +183,6 @@
       <modules>
         <module>rocksdbjni-osx</module>
         <module>rocksdbjni-linux64</module>
-        <module>rocksdbjni-all</module>
       </modules>
     </profile>
 
@@ -198,13 +197,6 @@
       <id>osx</id>
       <modules>
         <module>rocksdbjni-osx</module>
-      </modules>
-    </profile>
-
-    <profile>
-      <id>all</id>
-      <modules>
-        <module>rocksdbjni-all</module>
       </modules>
     </profile>
 

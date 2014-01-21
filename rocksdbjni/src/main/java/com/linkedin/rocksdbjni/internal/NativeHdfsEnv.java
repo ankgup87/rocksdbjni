@@ -1,6 +1,5 @@
 package com.linkedin.rocksdbjni.internal;
 
-import org.fusesource.hawtjni.runtime.JniArg;
 import org.fusesource.hawtjni.runtime.JniClass;
 import org.fusesource.hawtjni.runtime.JniMethod;
 

@@ -19,10 +19,11 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.*;
 
-import static com.linkedin.rocksdbjni.internal.JniDBFactory.asString;
-import static com.linkedin.rocksdbjni.internal.JniDBFactory.bytes;
+import static com.linkedin.rocksdbjni.test.TestUtils.asString;
+import static com.linkedin.rocksdbjni.test.TestUtils.bytes;
 
 /**
  * Unit test for the DB class implementation.
@@ -30,15 +31,7 @@ import static com.linkedin.rocksdbjni.internal.JniDBFactory.bytes;
 public class DBTest extends TestCase
 {
 
-  DBFactory factory = JniDBFactory.factory;
-
-  File getTestDirectory(String name) throws IOException
-  {
-    File rc = new File(new File("test-data"), name);
-    factory.destroy(rc, new Options().createIfMissing(true));
-    rc.mkdirs();
-    return rc;
-  }
+  private DBFactory factory = JniDBFactory.factory;
 
   @Test
   public void testOpen() throws IOException
@@ -46,7 +39,7 @@ public class DBTest extends TestCase
 
     Options options = new Options().createIfMissing(true);
 
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     DB db = factory.open(path, options);
 
     db.close();
@@ -99,13 +92,10 @@ public class DBTest extends TestCase
                        }
                      });
 
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     factory.destroy(path, new Options());
 
     DB db = factory.open(path, options);
-
-    File path1 = getTestDirectory(getName() + "test");
-    DB db1 = factory.open(path1, options);
 
     WriteOptions wo = new WriteOptions().sync(false);
     ReadOptions ro = new ReadOptions().fillCache(true).verifyChecksums(true);
@@ -121,11 +111,10 @@ public class DBTest extends TestCase
     db.delete(bytes("New York"), wo);
     assertNull(db.get(bytes("New York"), ro));
 
-    // leveldb does not consider deleting something that does not exist an error.
+    // Rocks DB does not consider deleting something that does not exist an error.
     db.delete(bytes("New York"), wo);
 
     db.close();
-    db1.close();
   }
 
   @Test
@@ -135,7 +124,7 @@ public class DBTest extends TestCase
 
     Options options = new Options().createIfMissing(true);
 
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     DB db = factory.open(path, options);
 
     db.put(bytes("Tampa"), bytes("green"));
@@ -208,7 +197,7 @@ public class DBTest extends TestCase
       }
     });
 
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     DB db = factory.open(path, options);
 
     WriteOptions wo = new WriteOptions().sync(false);
@@ -233,7 +222,7 @@ public class DBTest extends TestCase
 
     Options options = new Options().createIfMissing(true);
 
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     DB db = factory.open(path, options);
 
     db.put(bytes("Tampa"), bytes("green"));
@@ -279,7 +268,7 @@ public class DBTest extends TestCase
       }
     });
 
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     DB db = factory.open(path, options);
     if (db instanceof JniDB)
     {
@@ -312,7 +301,7 @@ public class DBTest extends TestCase
 
     Options options = new Options().createIfMissing(true);
 
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     DB db = factory.open(path, options);
 
     db.put(bytes("NA"), bytes("Na"));
@@ -349,7 +338,7 @@ public class DBTest extends TestCase
   {
     Options options = new Options().createIfMissing(true);
 
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     DB db = factory.open(path, options);
 
     Random r = new Random(0);
@@ -400,7 +389,7 @@ public class DBTest extends TestCase
       }
     });
 
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     DB db = factory.open(path, options);
 
     ArrayList<String> expecting = new ArrayList<String>();
@@ -453,7 +442,7 @@ public class DBTest extends TestCase
       }
     });
 
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     DB db = factory.open(path, options);
 
     ArrayList<String> expecting = new ArrayList<String>();
@@ -481,7 +470,7 @@ public class DBTest extends TestCase
   public void testSuspendAndResumeCompactions() throws Exception
   {
     Options options = new Options().createIfMissing(true);
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     DB db = factory.open(path, options);
     db.suspendCompactions();
     db.resumeCompactions();
@@ -500,7 +489,7 @@ public class DBTest extends TestCase
 
     Options options = new Options().createIfMissing(true);
 
-    File path = getTestDirectory(getName());
+    File path = TestUtils.getTestDirectory(factory, getName());
     DB db = factory.open(path, options);
 
     db.put(bytes("Tampa"), bytes("green"));
@@ -526,7 +515,7 @@ public class DBTest extends TestCase
   {
     Options options1 = new Options().createIfMissing(true);
 
-    File path1 = getTestDirectory(getName());
+    File path1 = TestUtils.getTestDirectory(factory, getName());
     DB db1 = factory.open(path1, options1);
     NativeEnv.setNumBackgroundThreads(db1.envPtr(), 5, 0);
     // IntelliJ shows that 5 background threads get created!
@@ -540,7 +529,7 @@ public class DBTest extends TestCase
 
     // Reuse the env in a new db
     Options options2 = new Options().createIfMissing(true).envPtr(db1.envPtr());
-    File path2 = getTestDirectory(getName() + "_2");
+    File path2 = TestUtils.getTestDirectory(factory, getName() + "_2");
     DB db2 = factory.open(path2, options2);
 
     db2.put(bytes("Tampa"), bytes("green"));
@@ -554,33 +543,55 @@ public class DBTest extends TestCase
     // the dbs.
     db1.close();
     db2.close();
-    // Intellij shows that background threads are created only once, hurray!
   }
 
   // TODO: Fix this when DB deletion is fixed
-  /*
-   * @Test public void testIssue26() throws IOException {
-   * 
-   * JniDBFactory.pushMemoryPool(1024 * 512); try { Options options = new Options();
-   * options.createIfMissing(true);
-   * 
-   * DB db = factory.open(getTestDirectory(getName()), options);
-   * 
-   * for (int i = 0; i < 1024 * 1024; i++) { byte[] key = ByteBuffer.allocate(4).putInt(i).array();
-   * byte[] value = ByteBuffer.allocate(4).putInt(-i).array(); db.put(key, value);
-   * assertTrue(Arrays.equals(db.get(key), value)); } //db.close(); } finally {
-   * JniDBFactory.popMemoryPool(); }
-   * 
-   * }
-   */
 
-  /*
-   * @Test public void testIssue27() throws IOException {
-   * 
-   * Options options = new Options(); options.createIfMissing(true); DB db =
-   * factory.open(getTestDirectory(getName()), options); db.close();
-   * 
-   * try { db.iterator(); fail("Expected a DBException"); } catch(DBException e) { } }
-   */
+  @Test
+  public void testIssue26() throws IOException
+  {
+
+    JniDBFactory.pushMemoryPool(1024 * 512);
+    try
+    {
+      Options options = new Options();
+      options.createIfMissing(true);
+
+      DB db = factory.open(TestUtils.getTestDirectory(factory, getName()), options);
+
+      for (int i = 0; i < 1024 * 1024; i++)
+      {
+        byte[] key = ByteBuffer.allocate(4).putInt(i).array();
+        byte[] value = ByteBuffer.allocate(4).putInt(-i).array();
+        db.put(key, value);
+        assertTrue(Arrays.equals(db.get(key), value));
+      }
+      db.close();
+    }
+    finally
+    {
+      JniDBFactory.popMemoryPool();
+    }
+
+  }
+
+  @Test
+  public void testIssue27() throws IOException
+  {
+
+    Options options = new Options();
+    options.createIfMissing(true);
+    DB db = factory.open(TestUtils.getTestDirectory(factory, getName()), options);
+    db.close();
+
+    try
+    {
+      db.iterator();
+      fail("Expected a DBException");
+    }
+    catch (DBException e)
+    {
+    }
+  }
 
 }

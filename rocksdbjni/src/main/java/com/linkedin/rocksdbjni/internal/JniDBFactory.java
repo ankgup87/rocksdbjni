@@ -45,39 +45,7 @@ public class JniDBFactory implements DBFactory
     VERSION = v;
   }
 
-  public static byte[] bytes(String value)
-  {
-    if (value == null)
-    {
-      return null;
-    }
-    try
-    {
-      return value.getBytes("UTF-8");
-    }
-    catch (UnsupportedEncodingException e)
-    {
-      throw new RuntimeException(e);
-    }
-  }
-
-  public static String asString(byte value[])
-  {
-    if (value == null)
-    {
-      return null;
-    }
-    try
-    {
-      return new String(value, "UTF-8");
-    }
-    catch (UnsupportedEncodingException e)
-    {
-      throw new RuntimeException(e);
-    }
-  }
-
-  static private class OptionsResourceHolder
+  private static class OptionsResourceHolder
   {
 
     NativeCache cache = null;
