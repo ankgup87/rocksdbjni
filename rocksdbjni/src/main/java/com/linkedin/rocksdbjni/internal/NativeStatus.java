@@ -9,8 +9,6 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.CPP_METHOD;
 
 /**
  * Provides a java interface to the C++ leveldb::Status class.
- * 
- * @author Ankit Gupta
  */
 class NativeStatus extends NativeObject
 {

@@ -2,9 +2,6 @@ package com.linkedin.rocksdbjni.internal;
 
 import com.linkedin.rocksdbjni.DBWriteBatch;
 
-/**
- * @author Ankit Gupta
- */
 public class JniWriteBatch implements DBWriteBatch
 {
 

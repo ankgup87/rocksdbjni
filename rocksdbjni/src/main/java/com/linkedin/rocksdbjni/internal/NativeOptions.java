@@ -13,8 +13,6 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.CONSTANT_INITIALIZER;
 
 /**
  * Provides a java interface to the C++ leveldb::Options class.
- * 
- * @author Ankit Gupta
  */
 @JniClass(name = "rocksdb::Options", flags = { STRUCT, CPP })
 public class NativeOptions

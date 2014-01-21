@@ -25,9 +25,7 @@ import static com.linkedin.rocksdbjni.internal.JniDBFactory.asString;
 import static com.linkedin.rocksdbjni.internal.JniDBFactory.bytes;
 
 /**
- * A Unit test for the DB class implementation.
- * 
- * @author Ankit Gupta
+ * Unit test for the DB class implementation.
  */
 public class DBTest extends TestCase
 {

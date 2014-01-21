@@ -8,8 +8,6 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.*;
 
 /**
  * Provides a java interface to the C++ std::string class.
- * 
- * @author Ankit Gupta
  */
 class NativeStdString extends NativeObject
 {

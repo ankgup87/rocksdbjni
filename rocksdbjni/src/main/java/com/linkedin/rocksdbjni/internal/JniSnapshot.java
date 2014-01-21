@@ -2,9 +2,6 @@ package com.linkedin.rocksdbjni.internal;
 
 import com.linkedin.rocksdbjni.DBSnapshot;
 
-/**
- * @author Ankit Gupta
- */
 public class JniSnapshot implements DBSnapshot
 {
 

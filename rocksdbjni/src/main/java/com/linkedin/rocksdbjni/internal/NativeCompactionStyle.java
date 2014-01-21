@@ -1,8 +1,5 @@
 package com.linkedin.rocksdbjni.internal;
 
-/**
- * @author: aigupta
- */
 public enum NativeCompactionStyle
 {
   kCompactionStyleLevel(0x0), kCompactionStyleUniversal(0x1);

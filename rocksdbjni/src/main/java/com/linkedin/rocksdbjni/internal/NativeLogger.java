@@ -14,11 +14,7 @@ import static org.fusesource.hawtjni.runtime.FieldFlag.POINTER_FIELD;
 import static org.fusesource.hawtjni.runtime.MethodFlag.*;
 
 /**
- * <p>
  * Provides a java interface to the C++ leveldb::Logger class.
- * </p>
- * 
- * @author Ankit Gupta
  */
 public abstract class NativeLogger extends NativeObject
 {

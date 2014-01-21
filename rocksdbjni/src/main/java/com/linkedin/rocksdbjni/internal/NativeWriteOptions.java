@@ -8,8 +8,6 @@ import static org.fusesource.hawtjni.runtime.ClassFlag.STRUCT;
 
 /**
  * Provides a java interface to the C++ leveldb::WriteOptions class.
- * 
- * @author Ankit Gupta
  */
 @JniClass(name = "rocksdb::WriteOptions", flags = { STRUCT, CPP })
 public class NativeWriteOptions

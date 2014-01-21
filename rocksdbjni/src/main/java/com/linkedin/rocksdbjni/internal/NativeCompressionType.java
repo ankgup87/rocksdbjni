@@ -2,8 +2,6 @@ package com.linkedin.rocksdbjni.internal;
 
 /**
  * Provides a java interface to the C++ leveldb::CompressionType enum.
- * 
- * @author Ankit Gupta
  */
 public enum NativeCompressionType
 {

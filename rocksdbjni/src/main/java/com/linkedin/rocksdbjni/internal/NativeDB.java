@@ -14,8 +14,6 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.*;
 
 /**
  * The DB object provides the main interface to acessing LevelDB
- * 
- * @author Ankit Gupta
  */
 public class NativeDB extends NativeObject
 {

@@ -8,11 +8,7 @@ import static org.fusesource.hawtjni.runtime.ArgFlag.*;
 import static org.fusesource.hawtjni.runtime.ClassFlag.*;
 
 /**
- * <p>
  * Provides a java interface to the C++ leveldb::Comparator class.
- * </p>
- * 
- * @author Ankit Gupta
  */
 public abstract class NativeComparator extends NativeObject
 {

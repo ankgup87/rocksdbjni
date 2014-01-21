@@ -6,9 +6,6 @@ import java.util.NoSuchElementException;
 
 import com.linkedin.rocksdbjni.DBIterator;
 
-/**
- * @author Ankit Gupta
- */
 public class JniDBIterator implements DBIterator
 {
 

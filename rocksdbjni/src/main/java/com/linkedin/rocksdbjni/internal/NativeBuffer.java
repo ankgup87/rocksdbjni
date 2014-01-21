@@ -15,8 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * A NativeBuffer allocates a native buffer on the heap. It supports creating sub slices/views of
  * that buffer and manages reference tracking so that the the native buffer is freed once all
  * NativeBuffer views are deleted.
- * 
- * @author Ankit Gupta
  */
 public class NativeBuffer extends NativeObject
 {

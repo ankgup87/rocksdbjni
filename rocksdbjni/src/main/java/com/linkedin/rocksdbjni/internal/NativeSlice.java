@@ -14,8 +14,6 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.CPP_DELETE;
 
 /**
  * Provides a java interface to the C++ leveldb::Slice class.
- * 
- * @author Ankit Gupta
  */
 @JniClass(name = "rocksdb::Slice", flags = { STRUCT, CPP })
 class NativeSlice

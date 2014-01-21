@@ -8,8 +8,6 @@ import static org.fusesource.hawtjni.runtime.ClassFlag.*;
 
 /**
  * Provides a java interface to the C++ leveldb::Iterator class.
- * 
- * @author Ankit Gupta
  */
 public class NativeIterator extends NativeObject
 {

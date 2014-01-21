@@ -29,6 +29,23 @@
     <module>rocksdbjni</module>
   </modules>
 
+  <developers>
+    <developer>
+      <id>aigupta</id>
+      <name>Ankit Gupta</name>
+      <email>aigupta@linkedin.com</email>
+    </developer>
+    <developer>
+      <id>rsumbaly</id>
+      <name>Roshan Sumbaly</name>
+      <email>rsumbaly@linkedin.com</email>
+    </developer>
+    <developer>
+      <id>sghike</id>
+      <name>Swapnil Ghike</name>
+      <email>sghike@linkedin.com</email>
+    </developer>
+  </developers>
 
   <dependencies>
     <dependency>
@@ -164,8 +181,8 @@
     <profile>
       <id>full</id>
       <modules>
-        <module>rocksdbjni-linux64</module>
         <module>rocksdbjni-osx</module>
+        <module>rocksdbjni-linux64</module>
         <module>rocksdbjni-all</module>
       </modules>
     </profile>

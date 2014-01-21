@@ -16,9 +16,6 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.CONSTANT_INITIALIZER;
 import static org.fusesource.hawtjni.runtime.MethodFlag.CPP_DELETE;
 import static org.fusesource.hawtjni.runtime.MethodFlag.CPP_NEW;
 
-/**
- * @author Ankit Gupta
- */
 public abstract class NativeFilterPolicy extends NativeObject
 {
   @JniClass(name = "JNIBloomFilter", flags = { CPP, STRUCT })

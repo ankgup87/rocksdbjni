@@ -1,8 +1,5 @@
 package com.linkedin.rocksdbjni.types;
 
-/**
- * @author: aigupta
- */
 public enum CompactionStyle
 {
   LEVEL(0x00), UNIVERSAL(0x01);

@@ -11,8 +11,6 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.*;
 
 /**
  * Provides a java interface to the C++ leveldb::WriteBatch class.
- * 
- * @author Ankit Gupta
  */
 public class NativeWriteBatch extends NativeObject
 {

@@ -8,8 +8,6 @@ import static org.fusesource.hawtjni.runtime.ClassFlag.STRUCT;
 
 /**
  * Provides a java interface to the C++ leveldb::ReadOptions class.
- * 
- * @author Ankit Gupta
  */
 @JniClass(name = "rocksdb::ReadOptions", flags = { STRUCT, CPP })
 public class NativeReadOptions

@@ -1,8 +1,5 @@
 package com.linkedin.rocksdbjni.internal;
 
-/**
- * @author Ankit Gupta
- */
 public class WriteOptions
 {
   private boolean sync;

@@ -11,8 +11,6 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.CONSTANT_INITIALIZER;
 
 /**
  * Provides a java interface to the C++ leveldb::ReadOptions class.
- * 
- * @author Ankit Gupta
  */
 public class NativeRange
 {

@@ -2,8 +2,6 @@ package com.linkedin.rocksdbjni.internal;
 
 /**
  * A helper base class which is used to track a pointer to a native structure or class.
- * 
- * @author Ankit Gupta
  */
 class NativeObject
 {

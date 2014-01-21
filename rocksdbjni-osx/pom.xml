@@ -10,11 +10,11 @@
   </parent>
 
   <groupId>org.fusesource.rocksdbjni</groupId>
-  <artifactId>rocksdbjni-linux64</artifactId>
+  <artifactId>rocksdbjni-osx</artifactId>
   <version>0.1</version>
   
   <name>${project.artifactId}</name>
-  <description>The rocksdbjni linux 64 native libraries</description>
+  <description>The rocksdbjni osx </description>
       
   <dependencies>
     <dependency>
