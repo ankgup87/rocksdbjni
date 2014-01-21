@@ -1,19 +1,19 @@
 package com.linkedin.rocksdbjni.internal;
 
-import com.linkedin.rocksdbjni.Snapshot;
+import com.linkedin.rocksdbjni.DBSnapshot;
 
 public class ReadOptions
 {
   private boolean verifyChecksums = false;
   private boolean fillCache = true;
-  private Snapshot snapshot;
+  private DBSnapshot snapshot;
 
-  public Snapshot snapshot()
+  public DBSnapshot snapshot()
   {
     return snapshot;
   }
 
-  public ReadOptions snapshot(Snapshot snapshot)
+  public ReadOptions snapshot(DBSnapshot snapshot)
   {
     this.snapshot = snapshot;
     return this;

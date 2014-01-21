@@ -4,9 +4,6 @@ import java.io.Closeable;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
- */
 public interface DBIterator extends Iterator<Map.Entry<byte[], byte[]>>, Closeable
 {
 

@@ -2,8 +2,6 @@ package com.linkedin.rocksdbjni;
 
 import java.util.Comparator;
 
-/**
- */
 public interface DBComparator extends Comparator<byte[]>
 {
 

@@ -2,10 +2,7 @@ package com.linkedin.rocksdbjni;
 
 import java.util.List;
 
-/**
- * @author Ankit Gupta
- */
-public interface MergeOperator
+public interface DBMergeOperator
 {
   public byte[] fullMerge(byte[] key, byte[] existing_value, List<byte[]> operandList);
 

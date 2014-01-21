@@ -5,9 +5,6 @@ import java.io.IOException;
 
 import com.linkedin.rocksdbjni.internal.Options;
 
-/**
- * @author Ankit Gupta
- */
 public interface DBFactory
 {
 

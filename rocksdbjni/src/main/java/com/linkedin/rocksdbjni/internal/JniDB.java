@@ -3,9 +3,9 @@ package com.linkedin.rocksdbjni.internal;
 import com.linkedin.rocksdbjni.DB;
 import com.linkedin.rocksdbjni.DBException;
 import com.linkedin.rocksdbjni.DBIterator;
-import com.linkedin.rocksdbjni.Range;
-import com.linkedin.rocksdbjni.Snapshot;
-import com.linkedin.rocksdbjni.WriteBatch;
+import com.linkedin.rocksdbjni.DBRange;
+import com.linkedin.rocksdbjni.DBSnapshot;
+import com.linkedin.rocksdbjni.DBWriteBatch;
 
 public class JniDB implements DB
 {
@@ -128,17 +128,17 @@ public class JniDB implements DB
     delete(key, new WriteOptions());
   }
 
-  public void write(WriteBatch updates) throws DBException
+  public void write(DBWriteBatch updates) throws DBException
   {
     write(updates, new WriteOptions());
   }
 
-  public WriteBatch createWriteBatch()
+  public DBWriteBatch createWriteBatch()
   {
     return new JniWriteBatch(new NativeWriteBatch());
   }
 
-  public Snapshot put(byte[] key, byte[] value, WriteOptions options) throws DBException
+  public DBSnapshot put(byte[] key, byte[] value, WriteOptions options) throws DBException
   {
     if (db == null)
     {
@@ -155,7 +155,7 @@ public class JniDB implements DB
     }
   }
 
-  public Snapshot merge(byte[] key, byte[] value, WriteOptions options) throws DBException
+  public DBSnapshot merge(byte[] key, byte[] value, WriteOptions options) throws DBException
   {
     if (db == null)
     {
@@ -172,7 +172,7 @@ public class JniDB implements DB
     }
   }
 
-  public Snapshot delete(byte[] key, WriteOptions options) throws DBException
+  public DBSnapshot delete(byte[] key, WriteOptions options) throws DBException
   {
     if (db == null)
     {
@@ -189,7 +189,7 @@ public class JniDB implements DB
     }
   }
 
-  public Snapshot write(WriteBatch updates, WriteOptions options) throws DBException
+  public DBSnapshot write(DBWriteBatch updates, WriteOptions options) throws DBException
   {
     if (db == null)
     {
@@ -206,7 +206,7 @@ public class JniDB implements DB
     }
   }
 
-  public Snapshot getSnapshot()
+  public DBSnapshot getSnapshot()
   {
     if (db == null)
     {
@@ -215,7 +215,7 @@ public class JniDB implements DB
     return new JniSnapshot(db, db.getSnapshot());
   }
 
-  public long[] getApproximateSizes(Range... ranges)
+  public long[] getApproximateSizes(DBRange... ranges)
   {
     if (db == null)
     {

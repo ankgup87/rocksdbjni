@@ -5,9 +5,11 @@ import org.fusesource.hawtjni.runtime.JniClass;
 import org.fusesource.hawtjni.runtime.JniMethod;
 import org.fusesource.hawtjni.runtime.PointerMath;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import static org.fusesource.hawtjni.runtime.ArgFlag.NO_IN;
+import static org.fusesource.hawtjni.runtime.ArgFlag.NO_OUT;
+import static org.fusesource.hawtjni.runtime.ArgFlag.CRITICAL;
 
-import static org.fusesource.hawtjni.runtime.ArgFlag.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A NativeBuffer allocates a native buffer on the heap. It supports creating sub slices/views of

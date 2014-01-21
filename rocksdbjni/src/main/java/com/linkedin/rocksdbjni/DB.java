@@ -1,9 +1,5 @@
 package com.linkedin.rocksdbjni;
 
-/**
- * @author Ankit Gupta
- */
-
 import java.io.Closeable;
 import java.util.Map;
 
@@ -27,33 +23,33 @@ public interface DB extends Iterable<Map.Entry<byte[], byte[]>>, Closeable
 
   public void delete(byte[] key) throws DBException;
 
-  public void write(WriteBatch updates) throws DBException;
+  public void write(DBWriteBatch updates) throws DBException;
 
-  public WriteBatch createWriteBatch();
-
-  /**
-   * @return null if options.isSnapshot()==false otherwise returns a snapshot of the DB after this
-   *         operation.
-   */
-  public Snapshot put(byte[] key, byte[] value, WriteOptions options) throws DBException;
-
-  public Snapshot merge(byte[] key, byte[] value, WriteOptions options) throws DBException;
+  public DBWriteBatch createWriteBatch();
 
   /**
    * @return null if options.isSnapshot()==false otherwise returns a snapshot of the DB after this
    *         operation.
    */
-  public Snapshot delete(byte[] key, WriteOptions options) throws DBException;
+  public DBSnapshot put(byte[] key, byte[] value, WriteOptions options) throws DBException;
+
+  public DBSnapshot merge(byte[] key, byte[] value, WriteOptions options) throws DBException;
 
   /**
    * @return null if options.isSnapshot()==false otherwise returns a snapshot of the DB after this
    *         operation.
    */
-  public Snapshot write(WriteBatch updates, WriteOptions options) throws DBException;
+  public DBSnapshot delete(byte[] key, WriteOptions options) throws DBException;
 
-  public Snapshot getSnapshot();
+  /**
+   * @return null if options.isSnapshot()==false otherwise returns a snapshot of the DB after this
+   *         operation.
+   */
+  public DBSnapshot write(DBWriteBatch updates, WriteOptions options) throws DBException;
 
-  public long[] getApproximateSizes(Range... ranges);
+  public DBSnapshot getSnapshot();
+
+  public long[] getApproximateSizes(DBRange... ranges);
 
   public String getProperty(String name);
 

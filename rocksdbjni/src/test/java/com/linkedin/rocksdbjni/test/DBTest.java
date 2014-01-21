@@ -1,16 +1,16 @@
 package com.linkedin.rocksdbjni.test;
 
-import com.linkedin.rocksdbjni.CompactionFilter;
+import com.linkedin.rocksdbjni.DBCompactionFilter;
 import com.linkedin.rocksdbjni.DB;
 import com.linkedin.rocksdbjni.DBComparator;
 import com.linkedin.rocksdbjni.DBException;
 import com.linkedin.rocksdbjni.DBFactory;
 import com.linkedin.rocksdbjni.DBIterator;
-import com.linkedin.rocksdbjni.FilterPolicy;
+import com.linkedin.rocksdbjni.DBFilterPolicy;
 import com.linkedin.rocksdbjni.DBLogger;
-import com.linkedin.rocksdbjni.MergeOperator;
-import com.linkedin.rocksdbjni.Range;
-import com.linkedin.rocksdbjni.WriteBatch;
+import com.linkedin.rocksdbjni.DBMergeOperator;
+import com.linkedin.rocksdbjni.DBRange;
+import com.linkedin.rocksdbjni.DBWriteBatch;
 import com.linkedin.rocksdbjni.internal.*;
 
 import junit.framework.Assert;
@@ -81,7 +81,7 @@ public class DBTest extends TestCase
     Options options =
         new Options().createIfMissing(true)
                      .nativeCache(new NativeCache(10 * 1024 * 1024, 6))
-                     .filterPolicy(new FilterPolicy()
+                     .filterPolicy(new DBFilterPolicy()
                      {
                        public int bitsPerKey()
                        {
@@ -168,7 +168,7 @@ public class DBTest extends TestCase
   {
 
     Options options = new Options().createIfMissing(true);
-    options.mergeOperator(new MergeOperator()
+    options.mergeOperator(new DBMergeOperator()
     {
 
       public byte[] fullMerge(byte[] key, byte[] existing_value, List<byte[]> operandList)
@@ -268,7 +268,7 @@ public class DBTest extends TestCase
       DBException
   {
     Options options = new Options().createIfMissing(true);
-    options.compactionFilter(new CompactionFilter()
+    options.compactionFilter(new DBCompactionFilter()
     {
       public boolean filter(byte[] key, byte[] existingValue)
       {
@@ -319,7 +319,7 @@ public class DBTest extends TestCase
 
     db.put(bytes("NA"), bytes("Na"));
 
-    WriteBatch batch = db.createWriteBatch();
+    DBWriteBatch batch = db.createWriteBatch();
     batch.delete(bytes("NA"));
     batch.put(bytes("Tampa"), bytes("green"));
     batch.put(bytes("London"), bytes("red"));
@@ -365,7 +365,7 @@ public class DBTest extends TestCase
       db.put(bytes("row" + i), bytes(data));
     }
 
-    long[] approximateSizes = db.getApproximateSizes(new Range(bytes("row"), bytes("s")));
+    long[] approximateSizes = db.getApproximateSizes(new DBRange(bytes("row"), bytes("s")));
     assertNotNull(approximateSizes);
     assertEquals(1, approximateSizes.length);
     assertTrue("Wrong size", approximateSizes[0] > 0);

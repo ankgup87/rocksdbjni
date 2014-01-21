@@ -1,11 +1,11 @@
 package com.linkedin.rocksdbjni.internal;
 
-import com.linkedin.rocksdbjni.WriteBatch;
+import com.linkedin.rocksdbjni.DBWriteBatch;
 
 /**
  * @author Ankit Gupta
  */
-public class JniWriteBatch implements WriteBatch
+public class JniWriteBatch implements DBWriteBatch
 {
 
   private final NativeWriteBatch writeBatch;
@@ -20,13 +20,13 @@ public class JniWriteBatch implements WriteBatch
     writeBatch.delete();
   }
 
-  public WriteBatch put(byte[] key, byte[] value)
+  public DBWriteBatch put(byte[] key, byte[] value)
   {
     writeBatch.put(key, value);
     return this;
   }
 
-  public WriteBatch delete(byte[] key)
+  public DBWriteBatch delete(byte[] key)
   {
     writeBatch.delete(key);
     return this;

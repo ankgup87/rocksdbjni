@@ -11,14 +11,12 @@ import static org.fusesource.hawtjni.runtime.ArgFlag.NO_OUT;
 import static org.fusesource.hawtjni.runtime.ClassFlag.CPP;
 import static org.fusesource.hawtjni.runtime.ClassFlag.STRUCT;
 import static org.fusesource.hawtjni.runtime.FieldFlag.CONSTANT;
-import static org.fusesource.hawtjni.runtime.FieldFlag.POINTER_FIELD;
 import static org.fusesource.hawtjni.runtime.FieldFlag.SHARED_PTR;
 import static org.fusesource.hawtjni.runtime.MethodFlag.*;
 
 /**
  * Provides a java interface to the C++ leveldb::Cache class.
  * 
- * @author Ankit Gupta
  */
 public class NativeCache extends NativeObject
 {

@@ -4,13 +4,13 @@ import java.util.List;
 
 import java.io.*;
 
-import com.linkedin.rocksdbjni.CompactionFilter;
+import com.linkedin.rocksdbjni.DBCompactionFilter;
 import com.linkedin.rocksdbjni.DB;
 import com.linkedin.rocksdbjni.DBComparator;
 import com.linkedin.rocksdbjni.DBFactory;
-import com.linkedin.rocksdbjni.FilterPolicy;
+import com.linkedin.rocksdbjni.DBFilterPolicy;
 import com.linkedin.rocksdbjni.DBLogger;
-import com.linkedin.rocksdbjni.MergeOperator;
+import com.linkedin.rocksdbjni.DBMergeOperator;
 
 public class JniDBFactory implements DBFactory
 {
@@ -148,7 +148,7 @@ public class JniDBFactory implements DBFactory
         options.cache(value.nativeCache());
       }
 
-      final FilterPolicy filterPolicy = value.filterPolicy();
+      final DBFilterPolicy filterPolicy = value.filterPolicy();
       if (filterPolicy != null)
       {
         nativeFilterPolicy = new NativeFilterPolicy(filterPolicy.bitsPerKey())
@@ -196,7 +196,7 @@ public class JniDBFactory implements DBFactory
         options.infoLog(logger);
       }
 
-      final MergeOperator mergeOperator = value.mergeOperator();
+      final DBMergeOperator mergeOperator = value.mergeOperator();
       if (mergeOperator != null)
       {
         nativeMergeOperator = new NativeMergeOperator()
@@ -223,7 +223,7 @@ public class JniDBFactory implements DBFactory
         options.mergeOperator(nativeMergeOperator);
       }
 
-      final CompactionFilter compactionFilter = value.compactionFilter();
+      final DBCompactionFilter compactionFilter = value.compactionFilter();
       if (compactionFilter != null)
       {
         nativeCompactionFilter = new NativeCompactionFilter()

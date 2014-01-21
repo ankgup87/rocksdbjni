@@ -4,10 +4,6 @@ import org.fusesource.hawtjni.runtime.JniArg;
 import org.fusesource.hawtjni.runtime.JniClass;
 import org.fusesource.hawtjni.runtime.JniField;
 import org.fusesource.hawtjni.runtime.JniMethod;
-
-import java.io.File;
-import java.io.IOException;
-
 import static org.fusesource.hawtjni.runtime.ClassFlag.CPP;
 import static org.fusesource.hawtjni.runtime.FieldFlag.CONSTANT;
 import static org.fusesource.hawtjni.runtime.MethodFlag.*;
@@ -15,10 +11,8 @@ import static org.fusesource.hawtjni.runtime.ArgFlag.*;
 
 /**
  * Some miscellaneous utility functions.
- * 
- * @author Ankit Gupta
  */
-public class DBUtil
+public class JniUtil
 {
 
   @JniClass(name = "rocksdb::Env", flags = { CPP })

@@ -1,11 +1,11 @@
 package com.linkedin.rocksdbjni.internal;
 
-import com.linkedin.rocksdbjni.Snapshot;
+import com.linkedin.rocksdbjni.DBSnapshot;
 
 /**
  * @author Ankit Gupta
  */
-public class JniSnapshot implements Snapshot
+public class JniSnapshot implements DBSnapshot
 {
 
   private final NativeDB db;

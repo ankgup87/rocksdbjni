@@ -7,9 +7,6 @@ import static org.fusesource.hawtjni.runtime.MethodFlag.*;
 import static org.fusesource.hawtjni.runtime.ArgFlag.*;
 import static org.fusesource.hawtjni.runtime.ClassFlag.*;
 
-/**
- * @author Ankit Gupta
- */
 public abstract class NativeCompactionFilter extends NativeObject
 {
   @JniClass(name = "JNICompactionFilter", flags = { STRUCT, CPP })

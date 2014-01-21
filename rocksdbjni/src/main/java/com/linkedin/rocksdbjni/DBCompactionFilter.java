@@ -1,9 +1,6 @@
 package com.linkedin.rocksdbjni;
 
-/**
- * @author: Ankit Gupta
- */
-public interface CompactionFilter
+public interface DBCompactionFilter
 {
   public boolean filter(byte[] key, byte[] existingValue);
 

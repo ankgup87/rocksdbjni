@@ -21,11 +21,11 @@ package com.linkedin.rocksdbjni.internal;
  * limitations under the License.
  */
 
-import com.linkedin.rocksdbjni.CompactionFilter;
+import com.linkedin.rocksdbjni.DBCompactionFilter;
 import com.linkedin.rocksdbjni.DBComparator;
-import com.linkedin.rocksdbjni.FilterPolicy;
+import com.linkedin.rocksdbjni.DBFilterPolicy;
 import com.linkedin.rocksdbjni.DBLogger;
-import com.linkedin.rocksdbjni.MergeOperator;
+import com.linkedin.rocksdbjni.DBMergeOperator;
 import com.linkedin.rocksdbjni.Utils;
 import com.linkedin.rocksdbjni.types.CompactionStyle;
 import com.linkedin.rocksdbjni.types.CompressionType;
@@ -49,8 +49,8 @@ public class Options
   private DBLogger logger = null;
   private NativeCache nativeCache;
 
-  private CompactionFilter compactionFilter;
-  private MergeOperator _mergeOperator;
+  private DBCompactionFilter compactionFilter;
+  private DBMergeOperator _mergeOperator;
   private boolean disableSeekCompaction = false;
   private int numLevels = 7;
   private int level0FileNumCompactionTrigger = 4;
@@ -64,7 +64,7 @@ public class Options
   private long deleteObsoleteFilesPeriodMicros = 6 * 60 * 60 * 1000000;
   private int level0SlowdownWritesTrigger = 8;
   private long maxManifestFileSize = Integer.MAX_VALUE - 1;
-  private FilterPolicy filterPolicy;
+  private DBFilterPolicy filterPolicy;
   private CompactionStyle _compactionStyle = CompactionStyle.LEVEL;
   private long envPtr = 0;
 
@@ -334,12 +334,12 @@ public class Options
     return this;
   }
 
-  public FilterPolicy filterPolicy()
+  public DBFilterPolicy filterPolicy()
   {
     return filterPolicy;
   }
 
-  public Options filterPolicy(FilterPolicy filterPolicy)
+  public Options filterPolicy(DBFilterPolicy filterPolicy)
   {
     this.filterPolicy = filterPolicy;
     return this;
@@ -356,23 +356,23 @@ public class Options
     return this;
   }
 
-  public MergeOperator mergeOperator()
+  public DBMergeOperator mergeOperator()
   {
     return _mergeOperator;
   }
 
-  public Options mergeOperator(MergeOperator mergeOperator)
+  public Options mergeOperator(DBMergeOperator mergeOperator)
   {
     _mergeOperator = mergeOperator;
     return this;
   }
 
-  public CompactionFilter compactionFilter()
+  public DBCompactionFilter compactionFilter()
   {
     return compactionFilter;
   }
 
-  public Options compactionFilter(CompactionFilter compactionFilter)
+  public Options compactionFilter(DBCompactionFilter compactionFilter)
   {
     this.compactionFilter = compactionFilter;
     return this;
